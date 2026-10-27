@@ -16,16 +16,16 @@
       nav_schedule: "Acara", nav_visit: "Kunjungan", nav_join: "Gabung", nav_partner: "Partner",
       hero_eyebrow: "Pop-up market PKL terkurasi",
       hero_title: "Titik jajan favorit warga, kini <span>tertata rapi</span>.",
-      hero_sub: "Titik Ngemil merangkul pedagang kaki lima di sekitar Stasiun Gondangdia — dikurasi, ditata, dan diangkat jadi pengalaman jajan yang nyaman.",
+      hero_sub: "Titik Ngemil merangkul pedagang kaki lima di sekitar Stasiun Gondangdia — dikurasi, ditata, dan diangkat jadi pengalaman jajan yang nyaman. Event perdana: satu hari, satu lorong, 24 booth.",
       cta_explore: "Jelajahi Tenant", cta_visit: "Cara ke Lokasi",
       stat_tenants: "Tenant terkurasi", stat_stalls: "Lapak tertata", stat_zones: "Zona tematik",
       stat_sites: "Titik aktif",
       detail_event: "Detail Acara",
       featured: "Tenant Pilihan", featured_sub: "Cicipi dulu yang paling dicari pengunjung.",
       view_all: "Lihat semua tenant",
-      zones_title: "Zona Ngemil", zones_sub: "Setiap zona punya karakter, biar gampang nyari.",
+      zones_title: "Zona Ngemil", zones_sub: "Satu lorong, 24 booth bernomor — semua tenant ada di sini.",
       map_title: "Peta Lapak", map_sub: "Klik lapak di denah untuk lihat tenant-nya.",
-      schedule_title: "Jadwal Acara", schedule_sub: "Musik, talkshow, dan workshop sepanjang hari.",
+      schedule_title: "Jadwal Acara", schedule_sub: "Musik, talkshow, dan workshop di satu hari event.",
       visit_title: "Kunjungi Kami", visit_sub: "Akses gampang, dekat transportasi publik.",
       partner_title: "Jadi Partner / Sponsor", partner_sub: "Dukung PKL naik kelas, dapatkan exposure.",
       join_title: "Daftar Jadi Tenant", join_sub: "Isi formulir, tim kurasi kami akan menghubungi.",
@@ -34,7 +34,7 @@
       filtered: "tenant ditemukan",
       no_result: "Tidak ada tenant yang cocok. Coba kata kunci lain.",
       menu_title: "Menu & Harga", signature: "Signature",
-      open_hours: "Jam Buka", location: "Lokasi", transport: "Transportasi",
+      open_hours: "Jam Buka", location: "Lokasi", transport: "Transportasi", open_maps: "🧭 Buka di Google Maps",
       stall_table: "Daftar Titik Lapak", stall_table_sub: "Data lengkap tenant beserta zona dan nomor lapak.",
       th_tenant: "Tenant", th_cat: "Kategori", th_zone: "Zona", th_stall: "No. Lapak", th_action: "Aksi",
       view_map: "Lihat di Peta", view_detail: "Lihat Detail",
@@ -50,9 +50,9 @@
       language: "Bahasa",
       back: "Kembali", free_entry: "Gratis masuk", curated: "Terkurasi",
       partner_cta: "Hubungi Partnership",
-      sites_title: "Titik Ngemil", sites_sub: "Titik aktif dan rencana titik berikutnya.",
+      sites_title: "Titik Ngemil", sites_sub: "Satu titik aktif, sisanya segera hadir.",
       site_active: "Aktif", site_pending: "Segera Hadir", status_label: "Status",
-      hub_title: "Hub Titik", booth_list: "Daftar Tenant", booths_total: "booth",
+      hub_title: "Hub Titik", booth_list: "Daftar Tenant", booths_total: "Booth",
       day_active: "Hari aktif", day_closed: "Libur", operating_hours: "Jam operasional",
       lihat_denah: "Lihat Denah Booth", lihat_denah_lengkap: "Lihat Denah Lengkap",
       tenant_di_titik: "tenant di titik ini", tampilkan_lagi: "Tampilkan lebih banyak ↓",
@@ -71,16 +71,16 @@
       nav_schedule: "Schedule", nav_visit: "Visit", nav_join: "Join", nav_partner: "Partner",
       hero_eyebrow: "Curated street-vendor pop-up market",
       hero_title: "The city's favorite snack spots, now <span>neatly curated</span>.",
-      hero_sub: "Titik Ngemil embraces street vendors around Gondangdia Station — curated, organized, and elevated into a comfortable snacking experience.",
+      hero_sub: "Titik Ngemil embraces street vendors around Gondangdia Station — curated, organized, and elevated into a comfortable snacking experience. Debut event: one day, one lane, 24 booths.",
       cta_explore: "Explore Tenants", cta_visit: "Get Directions",
       stat_tenants: "Curated tenants", stat_stalls: "Organized stalls", stat_zones: "Themed zones",
       stat_sites: "Active points",
       detail_event: "Event Details",
       featured: "Featured Tenants", featured_sub: "Try what visitors hunt for first.",
       view_all: "View all tenants",
-      zones_title: "Ngemil Zones", zones_sub: "Each zone has its own character, easy to navigate.",
+      zones_title: "Ngemil Zones", zones_sub: "One lane, 24 numbered booths — every tenant lives here.",
       map_title: "Stall Map", map_sub: "Click a stall on the map to see its tenant.",
-      schedule_title: "Event Schedule", schedule_sub: "Music, talkshows, and workshops all day.",
+      schedule_title: "Event Schedule", schedule_sub: "Music, talkshows, and workshops across the single event day.",
       visit_title: "Visit Us", visit_sub: "Easy access, close to public transport.",
       partner_title: "Become a Partner / Sponsor", partner_sub: "Support street vendors leveling up, gain exposure.",
       join_title: "Register as a Tenant", join_sub: "Fill the form, our curation team will reach out.",
@@ -89,7 +89,7 @@
       filtered: "tenants found",
       no_result: "No matching tenants. Try another keyword.",
       menu_title: "Menu & Prices", signature: "Signature",
-      open_hours: "Opening Hours", location: "Location", transport: "Transport",
+      open_hours: "Opening Hours", location: "Location", transport: "Transport", open_maps: "🧭 Open in Google Maps",
       stall_table: "Stall List", stall_table_sub: "Full tenant data with zone and stall number.",
       th_tenant: "Tenant", th_cat: "Category", th_zone: "Zone", th_stall: "Stall No.", th_action: "Action",
       view_map: "View on Map", view_detail: "View Detail",
@@ -105,9 +105,9 @@
       language: "Language",
       back: "Back", free_entry: "Free entry", curated: "Curated",
       partner_cta: "Contact Partnership",
-      sites_title: "Titik Ngemil", sites_sub: "Active point and upcoming points.",
+      sites_title: "Titik Ngemil", sites_sub: "One active point, the rest coming soon.",
       site_active: "Active", site_pending: "Coming Soon", status_label: "Status",
-      hub_title: "Point Hub", booth_list: "Tenant List", booths_total: "booths",
+      hub_title: "Point Hub", booth_list: "Tenant List", booths_total: "Booths",
       day_active: "Active days", day_closed: "Closed", operating_hours: "Operating hours",
       lihat_denah: "View Booth Map", lihat_denah_lengkap: "View Full Map",
       tenant_di_titik: "tenants at this point", tampilkan_lagi: "Show more ↓",
@@ -135,6 +135,12 @@
     if (typeof obj === "string") return obj;
     return obj[lang] != null ? obj[lang] : (obj.id != null ? obj.id : "");
   }
+  // Escape untuk menyisipkan teks ke innerHTML / atribut SVG.
+  function escHtml(s) {
+    return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+  }
+  function escAttr(s) { return escHtml(s); }
   function setLang(l) {
     lang = l; localStorage.setItem(LS_LANG, l);
     document.documentElement.lang = l;
@@ -298,9 +304,9 @@
       stat(sites().filter(function (s) { return s.status === "active"; }).length + "/" + sites().length, "stat_sites");
     el = document.getElementById("hero-meta");
     if (el) el.innerHTML =
-      '<div>📅 <b>' + pick(DB.event.dayLabel) + ', 30 Okt 2026</b> — peluncuran</div>' +
-      '<div>🕒 <b>' + DB.event.startTime + "–" + DB.event.endTime + '</b> WIB · Senin–Sabtu</div>' +
-      '<div>📍 <b>' + pick(DB.event.venueName) + '</b></div>';
+      '<div>📅 <b>' + pick(DB.event.dayLabel) + ', 30 Okt 2026</b> — satu hari</div>' +
+      '<div>🕒 <b>' + DB.event.startTime + "–" + DB.event.endTime + '</b> WIB</div>' +
+      '<div>📍 <b>' + pick(siteBySlug(DB.activeSite).name) + '</b> · ' + DB.event.city + '</div>';
     // Titik (points): 1 aktif + 3 pending
     el = document.getElementById("points-grid");
     if (el) el.innerHTML = sites().map(siteCard).join("");
@@ -460,50 +466,91 @@
   function initMap() {
     var svg = document.getElementById("map-svg");
     if (!svg) return;
-    var W = 1000, H = 700;
+    // Kanvas 820x1360: 24 booth = 2 kolom x 12 mengapit lorong membujur ke bawah.
+    var W = 820, H = 1360;
     var preselect = qs("booth");
     var sel = preselect ? String(preselect) : null;
 
+    // Kecilkan font label sampai muat di dalam kotak booth (anti-overflow).
+    function fitLabels(root) {
+      root.querySelectorAll(".map-stall").forEach(function (g) {
+        var rect = g.querySelector("rect");
+        if (!rect) return;
+        var boxW = +rect.getAttribute("width") - 22;
+        g.querySelectorAll(".booth-name, .booth-tag").forEach(function (tx) {
+          var start = tx.classList.contains("booth-name") ? 15 : 12;
+          var size = start;
+          tx.removeAttribute("textLength");
+          tx.setAttribute("font-size", size);
+          var guard = 0;
+          while (guard++ < 16) {
+            var w = 0;
+            try { w = tx.getBBox().width; } catch (e) { return; }
+            if (w <= boxW) return;
+            size -= 0.5;
+            if (size < 7) break;
+            tx.setAttribute("font-size", size);
+          }
+          // masih tidak muat: rapatkan glyph agar pas tanpa keluar kotak
+          tx.setAttribute("textLength", boxW);
+          tx.setAttribute("lengthAdjust", "spacingAndGlyphs");
+        });
+      });
+    }
+
     function draw() {
       var parts = [];
-      parts.push('<svg viewBox="0 0 ' + W + ' ' + H + '" class="map-svg" xmlns="http://www.w3.org/2000/svg">');
+      parts.push('<svg viewBox="0 0 ' + W + ' ' + H + '" class="map-svg" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="' + escAttr(t("map_title")) + '">');
       parts.push('<rect x="0" y="0" width="' + W + '" height="' + H + '" fill="#fbf5ec"/>');
-      // grid
+      // grid halus
       for (var gx = 0; gx <= W; gx += 50) parts.push('<line x1="' + gx + '" y1="0" x2="' + gx + '" y2="' + H + '" stroke="#00000008"/>');
       for (var gy = 0; gy <= H; gy += 50) parts.push('<line x1="0" y1="' + gy + '" x2="' + W + '" y2="' + gy + '" stroke="#00000008"/>');
-      // zones
+      // zona (satu lorong)
       DB.zones.forEach(function (z) {
         var a = z.area;
-        parts.push('<rect class="map-zone-rect" x="' + a.x + '" y="' + a.y + '" width="' + a.w + '" height="' + a.h + '" rx="14" stroke="' + z.color + '"/>');
-        parts.push('<rect x="' + a.x + '" y="' + a.y + '" width="' + a.w + '" height="' + a.h + '" rx="14" fill="' + z.color + '" opacity="0.07"/>');
-        parts.push('<text class="map-zone-label" x="' + (a.x + 14) + '" y="' + (a.y + 26) + '">' + pick(z.name) + '</text>');
-        if (z.type === "stage") {
-          parts.push('<text x="' + (a.x + a.w / 2) + '" y="' + (a.y + a.h / 2 + 30) + '" text-anchor="middle" font-size="60">🎤</text>');
-        }
+        parts.push('<rect class="map-zone-rect" x="' + a.x + '" y="' + a.y + '" width="' + a.w + '" height="' + a.h + '" rx="16" stroke="' + z.color + '"/>');
+        parts.push('<rect x="' + a.x + '" y="' + a.y + '" width="' + a.w + '" height="' + a.h + '" rx="16" fill="' + z.color + '" opacity="0.06"/>');
+        parts.push('<text class="map-zone-label" x="' + (a.x + 16) + '" y="' + (a.y + 28) + '">' + escHtml(pick(z.name)) + '</text>');
       });
-      // stalls (booths)
+      // lorong / jalan tengah (vertikal)
+      var walkX = 330, walkW = 160;
+      parts.push('<rect class="map-walkway" x="' + walkX + '" y="30" width="' + walkW + '" height="' + (H - 60) + '" rx="10"/>');
+      parts.push('<line class="map-walkway-line" x1="' + (walkX + walkW / 2) + '" y1="46" x2="' + (walkX + walkW / 2) + '" y2="' + (H - 46) + '"/>');
+      parts.push('<text class="map-walkway-label" x="' + (walkX + walkW / 2) + '" y="' + (H / 2) + '" text-anchor="middle" transform="rotate(-90 ' + (walkX + walkW / 2) + ' ' + (H / 2) + ')">' + escHtml(pick(DB.zones[0].name)) + ' · jalan tengah</text>');
+      // booth
       DB.stalls.forEach(function (s) {
         var tn = DB.tenants.find(function (x) { return x.stallCode === s.code; });
         var zone = zoneById(s.zoneId);
         var isSel = String(sel) === String(s.no);
-        var label = tn ? shortName(tn.brand) : t("booth_kosong");
+        var label = tn ? tn.brand : t("booth_kosong");
         var stCol = tn ? boothStatusOf(tn).col : "#c9bfb3";
-        parts.push('<g class="map-stall' + (isSel ? " sel" : "") + '" data-stall="' + s.code + '" data-booth="' + s.no + '">' +
-          '<rect x="' + s.x + '" y="' + s.y + '" width="' + s.w + '" height="' + s.h + '" rx="9" stroke="' + zone.color + '"/>' +
-          '<rect x="' + (s.x + s.w - 14) + '" y="' + (s.y + 8) + '" width="8" height="8" rx="3" fill="' + stCol + '"/>' +
-          '<text x="' + (s.x + 10) + '" y="' + (s.y + 22) + '" font-size="10" fill="' + shade(zone.color) + '">Booth ' + s.no + '</text>' +
-          '<text x="' + (s.x + 10) + '" y="' + (s.y + 42) + '" font-weight="700">' + label + '</text>' +
+        parts.push('<g class="map-stall' + (isSel ? " sel" : "") + '" data-stall="' + s.code + '" data-booth="' + s.no + '" tabindex="0" role="button" aria-label="Booth ' + s.no + (tn ? ' — ' + escAttr(tn.brand) : "") + '">' +
+          '<rect x="' + s.x + '" y="' + s.y + '" width="' + s.w + '" height="' + s.h + '" rx="10" stroke="' + zone.color + '"/>' +
+          '<circle class="booth-dot" cx="' + (s.x + s.w - 14) + '" cy="' + (s.y + 16) + '" r="4.5" fill="' + stCol + '"/>' +
+          '<text class="booth-no" x="' + (s.x + 11) + '" y="' + (s.y + 19) + '" font-size="12">#' + s.no + '</text>' +
+          '<text class="booth-no-lg" x="' + (s.x + s.w / 2) + '" y="' + (s.y + s.h / 2 + 12) + '" text-anchor="middle" font-size="38">' + s.no + '</text>' +
+          '<text class="booth-name" x="' + (s.x + 11) + '" y="' + (s.y + 44) + '" font-weight="700" font-size="15">' + escHtml(label) + '</text>' +
+          (tn ? '<text class="booth-tag" x="' + (s.x + 11) + '" y="' + (s.y + 66) + '" font-size="12">' + escHtml(catById(tn.categoryId).icon + " " + pick(catById(tn.categoryId).name)) + '</text>' : '') +
           '</g>');
       });
       parts.push('</svg>');
       svg.innerHTML = parts.join("");
+      fitLabels(svg);
       svg.querySelectorAll(".map-stall").forEach(function (g) {
         g.addEventListener("click", function () { showStall(g.dataset.booth); });
+        g.addEventListener("keydown", function (e) {
+          if (e.key === "Enter" || e.key === " ") { e.preventDefault(); showStall(g.dataset.booth); }
+        });
       });
     }
-    function shortName(n) { return n.length > 20 ? n.slice(0, 19) + "…" : n; }
     function showStall(no) {
       sel = String(no); draw();
+      // simpan pilihan booth di URL supaya bisa dibagikan / di-refresh
+      try {
+        var u = new URL(location.href);
+        u.searchParams.set("booth", no);
+        history.replaceState(null, "", u);
+      } catch (e) {}
       var tn = tenantByBooth(no);
       var info = document.getElementById("stall-info");
       if (!info) return;
@@ -532,7 +579,13 @@
     }).join("");
     // table
     renderStallTable();
+    draw(); // gambar denah sejak awal (bukan hanya saat ada ?booth=)
     if (preselect) showStall(preselect);
+    // tombol kembali/forward browser ikut mengubah booth terpilih
+    window.addEventListener("popstate", function () {
+      var b = qs("booth");
+      if (b) showStall(b); else { sel = null; draw(); }
+    });
     window.TN_RERENDER = function () { draw(); renderStallTable(); if (sel) showStall(sel); };
   }
 
@@ -542,12 +595,12 @@
     tb.innerHTML = DB.tenants.map(function (tn) {
       var cat = catById(tn.categoryId), zone = zoneById(tn.zoneId);
       return '<tr>' +
-        '<td><b>' + tn.brand + '</b><br><span class="muted" style="font-size:.82rem">' + pick(tn.tagline) + '</span></td>' +
-        '<td><span class="badge-soft" style="background:' + cat.color + '22;color:' + shade(cat.color) + '">' + cat.icon + ' ' + pick(cat.name) + '</span></td>' +
-        '<td>' + (zone ? pick(zone.name) : "-") + '</td>' +
-        '<td><b>Booth ' + boothNoOf(tn.stallCode) + '</b></td>' +
-        '<td class="flex"><a class="btn btn-ghost btn-sm" href="/titik/gondangdia/denah?booth=' + boothNoOf(tn.stallCode) + '">🗺️</a>' +
-        '<a class="btn btn-ghost btn-sm" href="/tenant-detail?slug=' + tn.slug + '">→</a></td>' +
+        '<td data-label="Tenant"><b>' + tn.brand + '</b><br><span class="muted" style="font-size:.82rem">' + pick(tn.tagline) + '</span></td>' +
+        '<td data-label="Kategori"><span class="badge-soft" style="background:' + cat.color + '22;color:' + shade(cat.color) + '">' + cat.icon + ' ' + pick(cat.name) + '</span></td>' +
+        '<td data-label="Zona">' + (zone ? pick(zone.name) : "-") + '</td>' +
+        '<td data-label="Booth"><b>Booth ' + boothNoOf(tn.stallCode) + '</b></td>' +
+        '<td class="cell-actions"><a class="btn btn-ghost btn-sm" href="/titik/gondangdia/denah?booth=' + boothNoOf(tn.stallCode) + '" aria-label="Lihat booth di denah">🗺️ <span class="cell-actions-txt">Denah</span></a>' +
+        '<a class="btn btn-ghost btn-sm" href="/tenant-detail?slug=' + tn.slug + '" aria-label="Lihat detail tenant">→</a></td>' +
       '</tr>';
     }).join("");
   }
@@ -563,15 +616,18 @@
     if (!el) return;
     el.innerHTML =
       kv("📍 " + t("location"), pick(DB.event.venueName)) +
-      kv("🕒 " + t("open_hours"), pick(DB.event.dayLabel) + " · " + DB.event.startTime + "–" + DB.event.endTime) +
-      kv("🗓️ Tanggal", "30 Okt 2026") +
-      kv("🏙️ Kota", DB.event.city);
+      kv("🗓️ Tanggal", pick(DB.event.dayLabel) + ", 30 Okt 2026") +
+      kv("🏙️ Kota", DB.event.city) +
+      kv("🎪 Acara", pick(DB.event.theme));
     var tr = document.getElementById("visit-transport");
     if (tr) tr.innerHTML = DB.event.transport.map(function (x) {
       return '<div class="card"><div class="body"><h3>' + x.icon + ' ' + pick(x.label) + '</h3></div></div>';
     }).join("");
     var hrs = document.getElementById("visit-hours");
-    if (hrs) hrs.innerHTML = kv(t("open_hours"), DB.event.startTime + "–" + DB.event.endTime) + kv("Hari", pick(DB.event.dayLabel) + ", 30 Okt 2026");
+    if (hrs) hrs.innerHTML =
+      kv(t("open_hours"), DB.event.startTime + "–" + DB.event.endTime + " WIB") +
+      kv(t("day_active"), pick(DB.event.dayLabel)) +
+      kv("Durasi", "8 jam (satu hari)");
     window.TN_RERENDER = function () { initVisit(); };
   }
 
@@ -654,15 +710,16 @@
         '<div><div class="section-head"><div><h2>' + t("day_active") + '</h2>' +
           '<p>' + t("operating_hours") + ': ' + s.openTime + '–' + s.closeTime + ' WIB</p></div></div>' + daysPills(s.days) +
           '<div class="grid grid-2" style="margin-top:20px">' +
-            '<div class="panel"><h3>' + t("location") + '</h3><p class="muted mb0">' + s.address + '</p></div>' +
-            '<div class="panel"><h3>' + t("booths_total").replace(/^\w/, function(c){return c.toUpperCase();}) + '</h3><p class="muted mb0">' + s.capacity + ' booth · ' + DB.tenants.length + ' ' + t("tenant_di_titik") + '</p></div>' +
+            '<div class="panel"><h3>📍 ' + t("location") + '</h3><p class="muted mb0">' + s.address + '</p></div>' +
+            '<div class="panel"><h3>🧾 ' + t("booths_total") + '</h3><p class="muted mb0">' + s.capacity + ' booth · ' + DB.tenants.length + ' ' + t("tenant_di_titik") + '</p></div>' +
           '</div>' +
         '</div>' +
         '<div class="panel"><h3>' + t("status_label") + '</h3><div class="kv">' +
           kv(t("status_label"), t("site_active")) +
+          kv(t("day_active"), dayLabel("jumat")) +
           kv("Kapasitas", s.capacity + " booth") +
           kv("Terisi", DB.tenants.length + " booth") +
-          kv("Launch", "30 Oktober 2026") +
+          kv("Tanggal", "30 Okt 2026") +
         '</div><a class="btn btn-primary btn-block" style="margin-top:14px" href="/daftar-tenant">' + t("join_title") + '</a></div>' +
       '</div>' +
       '<div class="section-head" style="margin-top:40px"><div><h2>' + t("booth_list") + '</h2>' +

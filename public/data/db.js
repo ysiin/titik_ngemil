@@ -20,7 +20,7 @@
     dayLabel: { id: "Jumat", en: "Friday" },
     startTime: "14:00",
     endTime: "22:00",
-    venueName: { id: "Kawasan Stasiun Gondangdia", en: "Gondangdia Station Area" },
+    venueName: { id: "Lorong Srikaya, Gondangdia", en: "Srikaya Lane, Gondangdia" },
     address: "Jl. Srikaya II, Kebon Sirih, Kec. Menteng, Jakarta Pusat 10340",
     city: "Jakarta Pusat",
     mapsUrl: "https://maps.google.com/?q=Stasiun+Gondangdia+Jakarta",
@@ -42,70 +42,40 @@
     { id: "nonfood", name: { id: "Non-Food", en: "Non-Food" }, icon: "🛍️", color: "#7bb662" }
   ];
 
-  // Denah peta: kanvas 1000 x 700 (viewBox). Zona = area, stall = kotak di dalamnya.
+  // Denah peta: kanvas 820 x 1360 (viewBox). Satu titik = satu lorong = satu zona.
+  // Booth disusun dua kolom mengapit jalan tengah (lorong) yang membujur ke bawah,
+  // supaya nama tenant masih terbaca saat peta diperkecil.
   var ZONES = [
     {
-      id: "gate", mapKey: "gate", type: "gate", color: "#ffd166",
-      name: { id: "Pintu Gondangdia", en: "Gondangdia Gate" },
-      blurb: { id: "Gerbang masuk & titik temu utama.", en: "Main entrance & meeting point." },
-      area: { x: 20, y: 20, w: 200, h: 360 }
-    },
-    {
-      id: "stage", mapKey: "stage", type: "stage", color: "#ef476f",
-      name: { id: "Panggung Ngemil", en: "Ngemil Stage" },
-      blurb: { id: "Musik, talkshow, dan workshop.", en: "Music, talkshow, and workshops." },
-      area: { x: 20, y: 400, w: 200, h: 280 }
-    },
-    {
-      id: "srikaya", mapKey: "srikaya", type: "indoor", color: "#06d6a0",
+      id: "srikaya", mapKey: "srikaya", type: "outdoor", color: "#06d6a0",
       name: { id: "Lorong Srikaya", en: "Srikaya Lane" },
-      blurb: { id: "Jalur kuliner utama, porsi berat.", en: "Main food lane for hearty portions." },
-      area: { x: 240, y: 20, w: 300, h: 660 }
-    },
-    {
-      id: "cutmeutia", mapKey: "cutmeutia", type: "outdoor", color: "#8ecae6",
-      name: { id: "Taman Cut Meutia", en: "Cut Meutia Park" },
-      blurb: { id: "Area terbuka untuk jajan santai.", en: "Open area for relaxed snacking." },
-      area: { x: 560, y: 20, w: 420, h: 330 }
-    },
-    {
-      id: "transit", mapKey: "transit", type: "outdoor", color: "#b5179e",
-      name: { id: "Pelataran Transit", en: "Transit Yard" },
-      blurb: { id: "Dekat area transit & drop off.", en: "Near the transit & drop-off area." },
-      area: { x: 560, y: 370, w: 420, h: 310 }
+      blurb: { id: "Satu lorong kuliner: 24 booth mengapit jalan tengah.", en: "One food lane: 24 booths along a central walkway." },
+      area: { x: 20, y: 20, w: 780, h: 1320 }
     }
   ];
 
-  // Stall: satu lapak = satu tenant (1:1 pada event ini).
-  var STALLS = [
-    { code: "A01", zoneId: "gate", label: "Lapak A01", x: 40, y: 40, w: 160, h: 70 },
-    { code: "A02", zoneId: "gate", label: "Lapak A02", x: 40, y: 120, w: 160, h: 70 },
-    { code: "A03", zoneId: "gate", label: "Lapak A03", x: 40, y: 200, w: 160, h: 70 },
-    { code: "A04", zoneId: "gate", label: "Lapak A04", x: 40, y: 280, w: 160, h: 70 },
-
-    { code: "B01", zoneId: "srikaya", label: "Lapak B01", x: 260, y: 40, w: 260, h: 90 },
-    { code: "B02", zoneId: "srikaya", label: "Lapak B02", x: 260, y: 150, w: 260, h: 90 },
-    { code: "B03", zoneId: "srikaya", label: "Lapak B03", x: 260, y: 260, w: 260, h: 90 },
-    { code: "B04", zoneId: "srikaya", label: "Lapak B04", x: 260, y: 370, w: 260, h: 90 },
-    { code: "B05", zoneId: "srikaya", label: "Lapak B05", x: 260, y: 480, w: 260, h: 90 },
-    { code: "B06", zoneId: "srikaya", label: "Lapak B06", x: 260, y: 590, w: 260, h: 90 },
-
-    { code: "C01", zoneId: "cutmeutia", label: "Lapak C01", x: 580, y: 40, w: 190, h: 65 },
-    { code: "C02", zoneId: "cutmeutia", label: "Lapak C02", x: 790, y: 40, w: 190, h: 65 },
-    { code: "C03", zoneId: "cutmeutia", label: "Lapak C03", x: 580, y: 120, w: 190, h: 65 },
-    { code: "C04", zoneId: "cutmeutia", label: "Lapak C04", x: 790, y: 120, w: 190, h: 65 },
-    { code: "C05", zoneId: "cutmeutia", label: "Lapak C05", x: 580, y: 200, w: 190, h: 65 },
-    { code: "C06", zoneId: "cutmeutia", label: "Lapak C06", x: 790, y: 200, w: 190, h: 65 },
-    { code: "C07", zoneId: "cutmeutia", label: "Lapak C07", x: 580, y: 280, w: 190, h: 65 },
-    { code: "C08", zoneId: "cutmeutia", label: "Lapak C08", x: 790, y: 280, w: 190, h: 65 },
-
-    { code: "D01", zoneId: "transit", label: "Lapak D01", x: 580, y: 400, w: 190, h: 80 },
-    { code: "D02", zoneId: "transit", label: "Lapak D02", x: 790, y: 400, w: 190, h: 80 },
-    { code: "D03", zoneId: "transit", label: "Lapak D03", x: 580, y: 500, w: 190, h: 80 },
-    { code: "D04", zoneId: "transit", label: "Lapak D04", x: 790, y: 500, w: 190, h: 80 },
-    { code: "D05", zoneId: "transit", label: "Lapak D05", x: 580, y: 600, w: 190, h: 80 },
-    { code: "D06", zoneId: "transit", label: "Lapak D06", x: 790, y: 600, w: 190, h: 80 }
-  ];
+  // Stall: satu lapak = satu tenant (1:1). Nomor booth 1..24 = B01..B24.
+  // Kolom kiri: B01–B12 · Kolom kanan: B13–B24.
+  var STALLS = (function () {
+    var out = [];
+    var W = 268, H = 88, PITCH = 104, Y0 = 56;
+    var LEFT_X = 46, RIGHT_X = 506;
+    for (var i = 0; i < 24; i++) {
+      var col = i < 12 ? 0 : 1;      // 0 = kiri, 1 = kanan
+      var row = i % 12;
+      var n = i + 1;
+      out.push({
+        code: "B" + (n < 10 ? "0" : "") + n,
+        zoneId: "srikaya",
+        label: "Booth " + n,
+        x: col === 0 ? LEFT_X : RIGHT_X,
+        y: Y0 + row * PITCH,
+        w: W,
+        h: H
+      });
+    }
+    return out;
+  })();
 
   function m(name, price, descId, descEn, signature) {
     return { name: name, price: price, desc: { id: descId, en: descEn }, signature: !!signature, available: true };
@@ -113,7 +83,7 @@
 
   var TENANTS = [
     {
-      slug: "kopi-titik-ngemil", brand: "Kopi Titik Ngemil", categoryId: "minuman", zoneId: "gate", stallCode: "A01",
+      slug: "kopi-titik-ngemil", brand: "Kopi Titik Ngemil", categoryId: "minuman", zoneId: "srikaya", stallCode: "B01",
       tagline: { id: "Kopi susu gula aren khas Gondangdia", en: "Gondangdia's signature palm-sugar milk coffee" },
       desc: { id: "Kopi susu gula aren dengan biji lokal, diseduh langsung di depan pengunjung.", en: "Palm-sugar milk coffee with local beans, brewed right in front of you." },
       story: { id: "Dimulai dari gerobak kopi keliling di sekitar stasiun sejak 2019.", en: "Started as a mobile coffee cart around the station in 2019." },
@@ -126,7 +96,7 @@
       ]
     },
     {
-      slug: "es-teh-jumbo", brand: "Es Teh Jumbo Pakde", categoryId: "minuman", zoneId: "gate", stallCode: "A02",
+      slug: "es-teh-jumbo", brand: "Es Teh Jumbo Pakde", categoryId: "minuman", zoneId: "srikaya", stallCode: "B02",
       tagline: { id: "Segelas sejumbo seember, harga kaki lima", en: "Giant glass, street-side price" },
       desc: { id: "Es teh manis ukuran jumbo, favorit pelepas dahaga commuter.", en: "Jumbo sweet iced tea, a commuter favorite." },
       story: { id: "Legendaris di trotoar Gondangdia sebelum penataan.", en: "A Gondangdia sidewalk legend before the rearrangement." },
@@ -138,7 +108,7 @@
       ]
     },
     {
-      slug: "kue-cubit-rangi-bu-iyem", brand: "Kue Cubit & Kue Rangi Bu Iyem", categoryId: "jajanan", zoneId: "gate", stallCode: "A03",
+      slug: "kue-cubit-rangi-bu-iyem", brand: "Kue Cubit & Kue Rangi Bu Iyem", categoryId: "jajanan", zoneId: "srikaya", stallCode: "B03",
       tagline: { id: "Jajanan pasar yang bikin kangen", en: "Traditional snacks that bring nostalgia" },
       desc: { id: "Kue cubit setengah matang dan kue rangi kelapa bakar.", en: "Half-cooked mini pancakes and grilled coconut wafers." },
       story: { id: "Resep warisan tiga generasi keluarga Bu Iyem.", en: "A recipe passed down through three generations." },
@@ -150,7 +120,7 @@
       ]
     },
     {
-      slug: "titik-merch-store", brand: "Titik Merch Store", categoryId: "nonfood", zoneId: "gate", stallCode: "A04",
+      slug: "titik-merch-store", brand: "Titik Merch Store", categoryId: "nonfood", zoneId: "srikaya", stallCode: "B04",
       tagline: { id: "Suvenir resmi Titik Ngemil", en: "Official Titik Ngemil merchandise" },
       desc: { id: "Kaus, totebag, dan pin edisi perdana event.", en: "T-shirts, totes, and pins from the debut edition." },
       story: { id: "Hasil kolaborasi dengan perajin lokal Menteng.", en: "Made in collaboration with local Menteng artisans." },
@@ -163,7 +133,7 @@
     },
 
     {
-      slug: "sate-ayam-pak-kumis", brand: "Sate Ayam Pak Kumis", categoryId: "kuliner", zoneId: "srikaya", stallCode: "B01",
+      slug: "sate-ayam-pak-kumis", brand: "Sate Ayam Pak Kumis", categoryId: "kuliner", zoneId: "srikaya", stallCode: "B05",
       tagline: { id: "Sate ayam madura, bumbu kacang pekat", en: "Madura chicken satay, rich peanut sauce" },
       desc: { id: "Sate ayam bakar arang dengan bumbu kacang khas Madura.", en: "Charcoal-grilled chicken satay with Madura peanut sauce." },
       story: { id: "50 tusuk per porsi, dibakar setelah dipesan.", en: "Grilled to order." },
@@ -175,7 +145,7 @@
       ]
     },
     {
-      slug: "bakso-urat-mas-yanto", brand: "Bakso Urat Mas Yanto", categoryId: "kuliner", zoneId: "srikaya", stallCode: "B02",
+      slug: "bakso-urat-mas-yanto", brand: "Bakso Urat Mas Yanto", categoryId: "kuliner", zoneId: "srikaya", stallCode: "B06",
       tagline: { id: "Bakso urat sapi, kuah kaldu gurih", en: "Beef tendon meatballs, savory broth" },
       desc: { id: "Bakso urat sapi dengan kuah kaldu sapi asli dan mie kuning.", en: "Beef tendon meatballs in authentic beef broth with noodles." },
       story: { id: "Kuah direbus sejak subuh setiap hari.", en: "Broth simmered from dawn daily." },
@@ -187,7 +157,7 @@
       ]
     },
     {
-      slug: "nasi-goreng-gila-bang-jek", brand: "Nasi Goreng Gila Bang Jek", categoryId: "kuliner", zoneId: "srikaya", stallCode: "B03",
+      slug: "nasi-goreng-gila-bang-jek", brand: "Nasi Goreng Gila Bang Jek", categoryId: "kuliner", zoneId: "srikaya", stallCode: "B07",
       tagline: { id: "Nasgor pedas level gila", en: "Crazy-spicy fried rice" },
       desc: { id: "Nasi goreng dengan sosis, ayam, telur, dan sambal pedas.", en: "Fried rice with sausage, chicken, egg, and spicy chili." },
       story: { id: "Menu favorit anak kos sekitar Menteng.", en: "A favorite among Menteng students." },
@@ -199,7 +169,7 @@
       ]
     },
     {
-      slug: "sate-taichan-gondangdia", brand: "Sate Taichan Gondangdia", categoryId: "kuliner", zoneId: "srikaya", stallCode: "B04",
+      slug: "sate-taichan-gondangdia", brand: "Sate Taichan Gondangdia", categoryId: "kuliner", zoneId: "srikaya", stallCode: "B08",
       tagline: { id: "Tanpa bumbu kacang, sambal pedas", en: "No peanut sauce, just spicy sambal" },
       desc: { id: "Sate ayam tanpa bumbu kacang, disajikan dengan sambal dan jeruk nipis.", en: "Chicken satay without peanut sauce, served with sambal and lime." },
       story: { id: "Tren sate taichan yang hits di kalangan muda.", en: "The trendy taichan satay popular with young crowds." },
@@ -211,7 +181,7 @@
       ]
     },
     {
-      slug: "mie-ayam-jamur-pak-agus", brand: "Mie Ayam Jamur Pak Agus", categoryId: "kuliner", zoneId: "srikaya", stallCode: "B05",
+      slug: "mie-ayam-jamur-pak-agus", brand: "Mie Ayam Jamur Pak Agus", categoryId: "kuliner", zoneId: "srikaya", stallCode: "B09",
       tagline: { id: "Mie ayam jamur, pangsit goreng", en: "Mushroom chicken noodles with fried wontons" },
       desc: { id: "Mie ayam dengan topping jamur dan pangsit goreng renyah.", en: "Chicken noodles topped with mushrooms and crispy fried wontons." },
       story: { id: "Gerobak keluarga sejak 2008.", en: "A family cart since 2008." },
@@ -223,7 +193,7 @@
       ]
     },
     {
-      slug: "ketoprak-bu-nani", brand: "Ketoprak Bu Nani", categoryId: "kuliner", zoneId: "srikaya", stallCode: "B06",
+      slug: "ketoprak-bu-nani", brand: "Ketoprak Bu Nani", categoryId: "kuliner", zoneId: "srikaya", stallCode: "B10",
       tagline: { id: "Ketoprak Betawi, bumbu kacang ulek", en: "Betawi ketoprak, hand-ground peanut sauce" },
       desc: { id: "Ketoprak tahu, bihun, dan lontong dengan bumbu kacang ulek kasar.", en: "Tofu, vermicelli, and rice cake with coarsely ground peanut sauce." },
       story: { id: "Bumbu diulek langsung di depan pembeli.", en: "Sauce ground fresh in front of customers." },
@@ -236,7 +206,7 @@
     },
 
     {
-      slug: "martabak-bang-doel", brand: "Martabak Bang Doel", categoryId: "kuliner", zoneId: "cutmeutia", stallCode: "C01",
+      slug: "martabak-bang-doel", brand: "Martabak Bang Doel", categoryId: "kuliner", zoneId: "srikaya", stallCode: "B11",
       tagline: { id: "Martabak telor & manis jumbo", en: "Giant savory & sweet martabak" },
       desc: { id: "Martabak telor isi daging dan martabak manis aneka topping.", en: "Meat-filled savory martabak and sweet martabak with assorted toppings." },
       story: { id: "Antrean panjang setiap akhir pekan.", en: "Long queues every weekend." },
@@ -248,7 +218,7 @@
       ]
     },
     {
-      slug: "pempek-yu-nina", brand: "Pempek Yu Nina", categoryId: "kuliner", zoneId: "cutmeutia", stallCode: "C02",
+      slug: "pempek-yu-nina", brand: "Pempek Yu Nina", categoryId: "kuliner", zoneId: "srikaya", stallCode: "B12",
       tagline: { id: "Pempek Palembang asli, cuko mantap", en: "Authentic Palembang pempek, bold vinegar sauce" },
       desc: { id: "Pempek kapal selam, lenjer, dan adaan dengan cuko pedas manis.", en: "Submarine, lenjer, and adaan pempek with sweet-spicy vinegar sauce." },
       story: { id: "Dibuat fresh dari ikan tenggiri.", en: "Made fresh from mackerel." },
@@ -260,7 +230,7 @@
       ]
     },
     {
-      slug: "siomay-batagor-abang-ican", brand: "Siomay & Batagor Abang Ican", categoryId: "kuliner", zoneId: "cutmeutia", stallCode: "C03",
+      slug: "siomay-batagor-abang-ican", brand: "Siomay & Batagor Abang Ican", categoryId: "kuliner", zoneId: "srikaya", stallCode: "B13",
       tagline: { id: "Siomay kukus & batagor goreng", en: "Steamed siomay & fried batagor" },
       desc: { id: "Siomay ikan kukus dan batagor goreng dengan saus kacang.", en: "Steamed fish dumplings and fried batagor with peanut sauce." },
       story: { id: "Tiga dekade jualan di Menteng.", en: "Three decades selling in Menteng." },
@@ -272,7 +242,7 @@
       ]
     },
     {
-      slug: "kerak-telor-betawi-zaki", brand: "Kerak Telor Betawi Zaki", categoryId: "jajanan", zoneId: "cutmeutia", stallCode: "C04",
+      slug: "kerak-telor-betawi-zaki", brand: "Kerak Telor Betawi Zaki", categoryId: "jajanan", zoneId: "srikaya", stallCode: "B14",
       tagline: { id: "Kerak telor betawi otentik", en: "Authentic Betawi kerak telor" },
       desc: { id: "Kerak telor dengan beras ketan, telur bebek, dan serundeng.", en: "Kerak telor with glutinous rice, duck egg, and coconut floss." },
       story: { id: "Dibuat di atas wajan arang, ala Betawi asli.", en: "Cooked on a charcoal pan, truly Betawi style." },
@@ -283,7 +253,7 @@
       ]
     },
     {
-      slug: "pisang-goreng-keju-munir", brand: "Pisang Goreng Keju Munir", categoryId: "jajanan", zoneId: "cutmeutia", stallCode: "C05",
+      slug: "pisang-goreng-keju-munir", brand: "Pisang Goreng Keju Munir", categoryId: "jajanan", zoneId: "srikaya", stallCode: "B15",
       tagline: { id: "Pisang goreng crispy topping keju", en: "Crispy banana fritters with cheese" },
       desc: { id: "Pisang goreng renyah dengan topping keju, cokelat, dan susu.", en: "Crispy banana fritters topped with cheese, chocolate, and milk." },
       story: { id: "Camilan favorit sore hari.", en: "A favorite afternoon snack." },
@@ -295,7 +265,7 @@
       ]
     },
     {
-      slug: "cendol-dawet-ayu-mbok-sri", brand: "Cendol & Dawet Ayu Mbok Sri", categoryId: "dessert", zoneId: "cutmeutia", stallCode: "C06",
+      slug: "cendol-dawet-ayu-mbok-sri", brand: "Cendol & Dawet Ayu Mbok Sri", categoryId: "dessert", zoneId: "srikaya", stallCode: "B16",
       tagline: { id: "Cendol & dawet ayu segar", en: "Fresh cendol & dawet ayu" },
       desc: { id: "Es cendol gula jawa dan dawet ayu santan, pelepas dahaga.", en: "Palm-sugar cendol and coconut dawet, refreshing." },
       story: { id: "Resep dawet dari Banjarnegara.", en: "A dawet recipe from Banjarnegara." },
@@ -307,7 +277,7 @@
       ]
     },
     {
-      slug: "tahu-gejrot-cirebon", brand: "Tahu Gejrot Cirebon", categoryId: "jajanan", zoneId: "cutmeutia", stallCode: "C07",
+      slug: "tahu-gejrot-cirebon", brand: "Tahu Gejrot Cirebon", categoryId: "jajanan", zoneId: "srikaya", stallCode: "B17",
       tagline: { id: "Tahu gejrot kuah asam pedas manis", en: "Tahu gejrot in sweet-sour-spicy broth" },
       desc: { id: "Tahu pong digoreng, disiram kuah gula jawa, cabai, dan bawang.", en: "Fried puffed tofu in palm sugar, chili, and shallot broth." },
       story: { id: "Kuah diulek dadakan sesuai pesanan.", en: "Broth ground to order." },
@@ -318,7 +288,7 @@
       ]
     },
     {
-      slug: "risoles-pastel-bu-tuti", brand: "Risoles & Pastel Bu Tuti", categoryId: "jajanan", zoneId: "cutmeutia", stallCode: "C08",
+      slug: "risoles-pastel-bu-tuti", brand: "Risoles & Pastel Bu Tuti", categoryId: "jajanan", zoneId: "srikaya", stallCode: "B18",
       tagline: { id: "Risoles & pastel goreng homemade", en: "Homemade fried risoles & pastel" },
       desc: { id: "Risoles isi ragout ayam dan pastel sayur, digoreng fresh.", en: "Chicken ragout risoles and veggie pastel, fried fresh." },
       story: { id: "Dibuat setiap pagi di rumah Bu Tuti.", en: "Made every morning at Bu Tuti's home." },
@@ -331,7 +301,7 @@
     },
 
     {
-      slug: "soto-betawi-h-mamat", brand: "Soto Betawi H. Mamat", categoryId: "kuliner", zoneId: "transit", stallCode: "D01",
+      slug: "soto-betawi-h-mamat", brand: "Soto Betawi H. Mamat", categoryId: "kuliner", zoneId: "srikaya", stallCode: "B19",
       tagline: { id: "Soto betawi kuah santan", en: "Betawi soto with coconut milk broth" },
       desc: { id: "Soto daging sapi kuah santan dengan kentang dan tomat.", en: "Beef soto in coconut milk broth with potato and tomato." },
       story: { id: "Meracik kuah sejak 1995.", en: "Cooking the broth since 1995." },
@@ -343,7 +313,7 @@
       ]
     },
     {
-      slug: "gado-gado-mbok-nah", brand: "Gado-Gado Mbok Nah", categoryId: "kuliner", zoneId: "transit", stallCode: "D02",
+      slug: "gado-gado-mbok-nah", brand: "Gado-Gado Mbok Nah", categoryId: "kuliner", zoneId: "srikaya", stallCode: "B20",
       tagline: { id: "Gado-gado sayur segar", en: "Gado-gado with fresh vegetables" },
       desc: { id: "Gado-gado sayur, tahu, tempe, dan lontong dengan bumbu kacang.", en: "Vegetables, tofu, tempeh, and rice cake with peanut sauce." },
       story: { id: "Sayur dipetik dari pasar pagi.", en: "Vegetables sourced from the morning market." },
@@ -355,7 +325,7 @@
       ]
     },
     {
-      slug: "es-kelapa-muda-segar", brand: "Es Kelapa Muda Segar", categoryId: "minuman", zoneId: "transit", stallCode: "D03",
+      slug: "es-kelapa-muda-segar", brand: "Es Kelapa Muda Segar", categoryId: "minuman", zoneId: "srikaya", stallCode: "B21",
       tagline: { id: "Kelapa muda asli, dingin menyegarkan", en: "Real young coconut, refreshingly cold" },
       desc: { id: "Es kelapa muda dengan daging kelapa utuh dan gula batu.", en: "Young coconut ice with full coconut meat and rock sugar." },
       story: { id: "Kelapa datang langsung dari pasar Indramayu.", en: "Coconuts arrive fresh from Indramayu market." },
@@ -367,7 +337,7 @@
       ]
     },
     {
-      slug: "polaroid-foto-kenangan", brand: "Polaroid & Foto Kenangan", categoryId: "nonfood", zoneId: "transit", stallCode: "D04",
+      slug: "polaroid-foto-kenangan", brand: "Polaroid & Foto Kenangan", categoryId: "nonfood", zoneId: "srikaya", stallCode: "B22",
       tagline: { id: "Abadikan momen ngemil kamu", en: "Capture your snacking moments" },
       desc: { id: "Foto polaroid instan dengan latar panggung Titik Ngemil.", en: "Instant polaroid photos with the Titik Ngemil backdrop." },
       story: { id: "Layanan foto untuk kenang-kenangan event.", en: "Photo service for event keepsakes." },
@@ -379,7 +349,7 @@
       ]
     },
     {
-      slug: "kebab-shawarma-al-arabi", brand: "Kebab & Shawarma Al-Arabi", categoryId: "kuliner", zoneId: "transit", stallCode: "D05",
+      slug: "kebab-shawarma-al-arabi", brand: "Kebab & Shawarma Al-Arabi", categoryId: "kuliner", zoneId: "srikaya", stallCode: "B23",
       tagline: { id: "Kebab & shawarma daging melimpah", en: "Loaded kebab & shawarma" },
       desc: { id: "Kebab dan shawarma ayam/sapi dengan saus spesial.", en: "Chicken or beef kebab and shawarma with special sauce." },
       story: { id: "Favorit makan malam para pekerja sekitar.", en: "A dinner favorite for nearby workers." },
@@ -391,7 +361,7 @@
       ]
     },
     {
-      slug: "lumpia-semarang-yu-iis", brand: "Lumpia Semarang Yu Iis", categoryId: "jajanan", zoneId: "transit", stallCode: "D06",
+      slug: "lumpia-semarang-yu-iis", brand: "Lumpia Semarang Yu Iis", categoryId: "jajanan", zoneId: "srikaya", stallCode: "B24",
       tagline: { id: "Lumpia goreng isi rebung", en: "Fried spring rolls with bamboo shoots" },
       desc: { id: "Lumpia isi rebung, ayam, dan telur, saus bawang khas Semarang.", en: "Spring rolls with bamboo shoots, chicken, and egg, Semarang-style." },
       story: { id: "Resep asli Semarang yang dibawa ke Jakarta.", en: "An authentic Semarang recipe brought to Jakarta." },
@@ -405,88 +375,89 @@
   ];
 
   var SCHEDULE = [
-    { id: "s1", time: "14:00", endTime: "14:30", type: "opening", stage: "Panggung Ngemil",
+    { id: "s1", time: "14:00", endTime: "14:30", type: "opening", stage: "Lorong Srikaya",
       title: { id: "Opening & Sambutan", en: "Opening & Welcome" },
       desc: { id: "Pembukaan resmi Titik Ngemil #1 bersama perwakilan tenant.", en: "Official opening of Titik Ngemil #1 with tenant representatives." } },
-    { id: "s2", time: "15:00", endTime: "16:00", type: "music", stage: "Panggung Ngemil",
+    { id: "s2", time: "15:00", endTime: "16:00", type: "music", stage: "Lorong Srikaya",
       title: { id: "Akustik Sore", en: "Afternoon Acoustic" },
       desc: { id: "Penampilan musisi akustik lokal Menteng.", en: "Local Menteng acoustic musicians." } },
-    { id: "s3", time: "16:30", endTime: "17:00", type: "talk", stage: "Panggung Ngemil",
+    { id: "s3", time: "16:30", endTime: "17:00", type: "talk", stage: "Lorong Srikaya",
       title: { id: "Talkshow: PKL Naik Kelas", en: "Talkshow: Street Vendors Level Up" },
       desc: { id: "Diskusi penataan PKL bersama pelaku usaha & komunitas.", en: "Discussion on organizing street vendors with businesses & communities." } },
-    { id: "s4", time: "17:00", endTime: "18:30", type: "music", stage: "Panggung Ngemil",
+    { id: "s4", time: "17:00", endTime: "18:30", type: "music", stage: "Lorong Srikaya",
       title: { id: "DJ Set Sore", en: "Sunset DJ Set" },
       desc: { id: "Musik santai menemani jam pulang kantor.", en: "Chill music for the commute-home hours." } },
-    { id: "s5", time: "18:30", endTime: "19:15", type: "workshop", stage: "Panggung Ngemil",
+    { id: "s5", time: "18:30", endTime: "19:15", type: "workshop", stage: "Lorong Srikaya",
       title: { id: "Demo Masak: Signature Tenant", en: "Cooking Demo: Tenant Signatures" },
       desc: { id: "Demo masak menu andalan dari tenant pilihan.", en: "Cooking demo of signature dishes from selected tenants." } },
-    { id: "s6", time: "19:15", endTime: "20:00", type: "quiz", stage: "Panggung Ngemil",
+    { id: "s6", time: "19:15", endTime: "20:00", type: "quiz", stage: "Lorong Srikaya",
       title: { id: "Kuis & Doorprize", en: "Quiz & Doorprize" },
       desc: { id: "Kuis berhadiah voucher tenant Titik Ngemil.", en: "Quiz with Titik Ngemil tenant vouchers." } },
-    { id: "s7", time: "20:00", endTime: "22:00", type: "music", stage: "Panggung Ngemil",
+    { id: "s7", time: "20:00", endTime: "22:00", type: "music", stage: "Lorong Srikaya",
       title: { id: "Musik Penutup", en: "Closing Music" },
       desc: { id: "Penampilan penutup hingga pasar tutup.", en: "Closing performance until the market closes." } }
   ];
 
   /* ===================== Multi-titik (lokasi) ===================== */
+  // CATATAN: saat ini hanya 1 titik yang aktif. Nama titik bisa diubah admin
+  // lewat Dashboard Admin → tab "Titik". Sisanya ditandai "Coming Soon".
   var SITES = [
     {
       id: "gondangdia", slug: "gondangdia", status: "active", city: "Jakarta Pusat",
-      name: { id: "Titik Gondangdia", en: "Gondangdia Point" },
-      blurb: { id: "Kawasan Stasiun Gondangdia — titik perdana Titik Ngemil.", en: "Gondangdia Station area — Titik Ngemil's debut point." },
+      name: { id: "Lorong Srikaya", en: "Srikaya Lane" },
+      blurb: { id: "Satu lorong, 24 booth. Titik perdana Titik Ngemil.", en: "One lane, 24 booths. Titik Ngemil's debut point." },
       address: "Jl. Srikaya II, Kebon Sirih, Kec. Menteng, Jakarta Pusat 10340",
       mapsUrl: "https://maps.google.com/?q=Stasiun+Gondangdia+Jakarta",
-      capacity: 24, days: ["senin", "selasa", "rabu", "kamis", "jumat", "sabtu"],
+      capacity: 24, days: ["jumat"],
       openTime: "14:00", closeTime: "22:00",
       launchDate: "2026-10-30"
     },
     {
-      id: "tanah-abang", slug: "tanah-abang", status: "pending", city: "Jakarta Pusat",
-      name: { id: "Titik Tanah Abang", en: "Tanah Abang Point" },
-      blurb: { id: "Rencana titik ke-2 di kawasan Tanah Abang.", en: "Planned 2nd point in the Tanah Abang area." },
-      address: "Kawasan Tanah Abang, Jakarta Pusat", mapsUrl: "https://maps.google.com/?q=Tanah+Abang+Jakarta",
-      capacity: 24, days: [], openTime: "14:00", closeTime: "22:00", launchDate: null
+      id: "next-1", slug: "next-1", status: "pending", city: "—",
+      name: { id: "Titik Berikutnya", en: "Next Point" },
+      blurb: { id: "Coming soon.", en: "Coming soon." },
+      address: "", mapsUrl: "",
+      capacity: 24, days: [], openTime: "", closeTime: "", launchDate: null
     },
     {
-      id: "juanda", slug: "juanda", status: "pending", city: "Jakarta Pusat",
-      name: { id: "Titik Juanda", en: "Juanda Point" },
-      blurb: { id: "Rencana titik ke-3 di kawasan Juanda.", en: "Planned 3rd point in the Juanda area." },
-      address: "Kawasan Juanda, Jakarta Pusat", mapsUrl: "https://maps.google.com/?q=Juanda+Jakarta",
-      capacity: 24, days: [], openTime: "14:00", closeTime: "22:00", launchDate: null
+      id: "next-2", slug: "next-2", status: "pending", city: "—",
+      name: { id: "Titik Berikutnya", en: "Next Point" },
+      blurb: { id: "Coming soon.", en: "Coming soon." },
+      address: "", mapsUrl: "",
+      capacity: 24, days: [], openTime: "", closeTime: "", launchDate: null
     },
     {
-      id: "cikini", slug: "cikini", status: "pending", city: "Jakarta Pusat",
-      name: { id: "Titik Cikini", en: "Cikini Point" },
-      blurb: { id: "Rencana titik ke-4 di kawasan Cikini.", en: "Planned 4th point in the Cikini area." },
-      address: "Kawasan Cikini, Jakarta Pusat", mapsUrl: "https://maps.google.com/?q=Cikini+Jakarta",
-      capacity: 24, days: [], openTime: "14:00", closeTime: "22:00", launchDate: null
+      id: "next-3", slug: "next-3", status: "pending", city: "—",
+      name: { id: "Titik Berikutnya", en: "Next Point" },
+      blurb: { id: "Coming soon.", en: "Coming soon." },
+      address: "", mapsUrl: "",
+      capacity: 24, days: [], openTime: "", closeTime: "", launchDate: null
     }
   ];
 
+  // Hari operasional: event perdana hanya 1 hari (Jumat).
+  // Hari lain tetap ada (closed) supaya admin bisa mengaktifkan untuk event berikutnya.
   var DAYS = [
-    { id: "senin", label: { id: "Senin", en: "Monday" } },
-    { id: "selasa", label: { id: "Selasa", en: "Tuesday" } },
-    { id: "rabu", label: { id: "Rabu", en: "Wednesday" } },
-    { id: "kamis", label: { id: "Kamis", en: "Thursday" } },
+    { id: "senin", label: { id: "Senin", en: "Monday" }, closed: true },
+    { id: "selasa", label: { id: "Selasa", en: "Tuesday" }, closed: true },
+    { id: "rabu", label: { id: "Rabu", en: "Wednesday" }, closed: true },
+    { id: "kamis", label: { id: "Kamis", en: "Thursday" }, closed: true },
     { id: "jumat", label: { id: "Jumat", en: "Friday" } },
-    { id: "sabtu", label: { id: "Sabtu", en: "Saturday" } },
+    { id: "sabtu", label: { id: "Sabtu", en: "Saturday" }, closed: true },
     { id: "minggu", label: { id: "Minggu", en: "Sunday" }, closed: true }
   ];
 
   // Pola rotasi (dipakai untuk "Jadwal Rotasi & Slot")
   var ROTATION_PATTERNS = {
-    full: ["senin", "selasa", "rabu", "kamis", "jumat", "sabtu"],
-    gasal: ["senin", "rabu", "jumat"],
-    genap: ["selasa", "kamis", "sabtu"]
+    eventDay: ["jumat"]
   };
 
   // Nomor booth 1..N mengikuti urutan lapak
   STALLS.forEach(function (s, i) { s.no = i + 1; s.boothStatus = "buka"; });
 
-  // Rotasi harian per tenant + status booth operasional (buka/tutup/habis)
+  // Semua tenant tampil di hari event (Jumat) + status booth operasional
   TENANTS.forEach(function (t, i) {
-    var keys = Object.keys(ROTATION_PATTERNS);
-    t.days = ROTATION_PATTERNS[keys[i % keys.length]].slice();
+    t.days = ["jumat"];
     t.boothStatus = i % 7 === 0 ? "tutup" : (i % 11 === 0 ? "habis" : "buka");
     t.verification = "disetujui"; // disetujui | perlu-revisi | ditolak | ditinjau | terkirim
   });
@@ -504,21 +475,21 @@
       id: "APP-2026-0002", brand_name: "Es Doger Kampung", category: "Dessert",
       contact_name: "Rahmat Hidayat", phone: "081333334444", email: "rahmat@email.com",
       pitch: "Es doger resep keluarga, cocok untuk sore hari.",
-      preferred_zone: "Taman Cut Meutia", stage: "ditinjau", site: "gondangdia", booth: null,
+      preferred_zone: "Lorong Srikaya", stage: "ditinjau", site: "gondangdia", booth: null,
       note: "", submitted_at: "2026-10-26"
     },
     {
       id: "APP-2026-0003", brand_name: "Ayam Geprek Juara", category: "Kuliner",
       contact_name: "Dedi Kurniawan", phone: "081355556666", email: "dedi@email.com",
       pitch: "Ayam geprek sambal bawang level 1-5.",
-      preferred_zone: "Pelataran Transit", stage: "perlu-revisi", site: "gondangdia", booth: null,
+      preferred_zone: "Lorong Srikaya", stage: "perlu-revisi", site: "gondangdia", booth: null,
       note: "Foto dapur & sertifikat halal belum dilampirkan.", submitted_at: "2026-10-24"
     },
     {
       id: "APP-2026-0004", brand_name: "Kopi Rakyat Senja", category: "Minuman",
       contact_name: "Sinta Maharani", phone: "081377778888", email: "sinta@email.com",
       pitch: "Kopi susu gula aren & manual brew dengan biji lokal.",
-      preferred_zone: "Pintu Gondangdia", stage: "disetujui", site: "gondangdia", booth: 25,
+      preferred_zone: "Lorong Srikaya", stage: "disetujui", site: "gondangdia", booth: 7,
       note: "", submitted_at: "2026-10-20"
     }
   ];

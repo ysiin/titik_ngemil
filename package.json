@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "wrangler pages dev public --d1=DB",
+    "dev:static": "node scripts/serve.mjs",
     "gen:seed": "node scripts/gen-seed.mjs",
     "db:init": "wrangler d1 execute titik-ngemil-db --remote --file=./schema.sql",
     "db:seed": "wrangler d1 execute titik-ngemil-db --remote --file=./seed.sql",

@@ -10,14 +10,27 @@
   if (auth.role === "admin") { location.href = "/dashboard/admin"; return; }
 
   var DB = window.TITIK_DB;
-  var email = (auth.email || "").toLowerCase();
+  var rawId = String(auth.email || auth.slug || "").trim().toLowerCase();
+  var id = rawId.replace(/^@/, "");
 
-  // pilih tenant: cocokkan email/instagram, kalau tidak ada ambil tenant pertama
+  // pilih tenant: cocokkan slug, instagram, atau WhatsApp. Kalau tidak ada, pakai tenant pertama (mode demo).
   var tn = DB.tenants.find(function (t) {
-    return (t.instagram && ("@" + t.instagram).toLowerCase() === email) ||
-           (t.whatsapp && t.whatsapp === auth.email) ||
-           t.slug === email;
-  }) || DB.tenants[3]; // fallback demo
+    return t.slug.toLowerCase() === id ||
+           String(t.instagram || "").toLowerCase().replace(/^@/, "") === id ||
+           String(t.whatsapp || "").replace(/\D/g, "") === id.replace(/\D/g, "");
+  });
+  var isFallback = !tn;
+  tn = tn || DB.tenants[0];
+
+  // verifikasi ikut data tenant, bukan hardcode
+  var VERIF = {
+    "disetujui": { label: "Disetujui", cls: "alert-ok", icon: "✅" },
+    "perlu-revisi": { label: "Perlu Revisi", cls: "alert-err", icon: "⚠️" },
+    "ditolak": { label: "Ditolak", cls: "alert-err", icon: "✕" },
+    "ditinjau": { label: "Sedang Ditinjau", cls: "alert-warn", icon: "⏳" },
+    "terkirim": { label: "Menunggu Verifikasi", cls: "alert-warn", icon: "📨" }
+  };
+  var verif = VERIF[tn.verification] || VERIF["ditinjau"];
 
   function boothStatus() {
     var map = {}; try { map = JSON.parse(localStorage.getItem(LS_BOOTH) || "{}"); } catch (e) {}
@@ -29,7 +42,10 @@
   }
 
   document.getElementById("t-name").textContent = tn.brand;
-  document.getElementById("t-sub").textContent = (DB.categories.find(function (c) { return c.id === tn.categoryId; }) || {}).name ? "" : "";
+  document.getElementById("t-sub").textContent = "Booth " + TN.boothNoOf(tn.stallCode) + " · " + TN.pick(TN.siteBySlug("gondangdia").name);
+  if (isFallback && rawId) {
+    TN.toast("ID \"" + rawId + "\" tidak cocok — menampilkan tenant demo.");
+  }
   document.getElementById("t-logout").onclick = function () { localStorage.removeItem("tn_auth"); location.href = "/masuk"; };
 
   function render() {
@@ -44,19 +60,19 @@
         '<div class="admin-card"><b style="color:' + stColor[cur] + '">' + stLabel[cur] + '</b><span class="muted">Status booth</span></div>' +
         '<div class="admin-card"><b>' + TN.boothNoOf(tn.stallCode) + '</b><span class="muted">Nomor booth</span></div>' +
         '<div class="admin-card"><b>' + tn.menu.length + '</b><span class="muted">Item menu</span></div>' +
-        '<div class="admin-card"><b style="font-size:1.2rem;color:#06805f">Disetujui</b><span class="muted">Verifikasi</span></div>' +
+        '<div class="admin-card"><b style="font-size:1.2rem;color:' + (verif.cls === "alert-ok" ? "#06805f" : verif.cls === "alert-err" ? "#b3203c" : "#8a6d1f") + '">' + verif.label + '</b><span class="muted">Verifikasi</span></div>' +
       '</div>' +
       '<div class="map-layout">' +
         '<div>' +
           '<div class="admin-card"><h3>Toggle Status Booth</h3>' +
-            '<p class="muted">Status ini tampil real-time di halaman Titik Gondangdia & denah.</p>' +
+            '<p class="muted">Status ini tampil real-time di halaman titik & denah.</p>' +
             '<div class="flex">' +
               btn("buka", "● BUKA") + btn("tutup", "○ TUTUP") + btn("habis", "✕ HABIS") +
             '</div>' +
           '</div>' +
           '<div class="admin-card"><h3>Jadwal Saya</h3>' +
             '<p class="muted mb0">Hari aktif: ' + (tn.days || []).map(TN.dayLabel).join(", ") + '</p>' +
-            '<p class="muted mb0">Titik: Titik Gondangdia · Booth ' + TN.boothNoOf(tn.stallCode) + '</p>' +
+            '<p class="muted mb0">Titik: ' + TN.pick(TN.siteBySlug("gondangdia").name) + ' · Booth ' + TN.boothNoOf(tn.stallCode) + '</p>' +
           '</div>' +
           '<div class="admin-card"><h3>Profil & Menu (' + tn.menu.length + ')</h3>' +
             '<div class="kv">' +
@@ -70,8 +86,8 @@
         '</div>' +
         '<div class="map-side">' +
           '<div class="admin-card"><h3>Status Verifikasi</h3>' +
-            '<div class="alert alert-ok">✅ Disetujui</div>' +
-            '<div class="kv">' + TN.kv("Nomor booth", TN.boothNoOf(tn.stallCode)) + TN.kv("Titik", "Gondangdia") + TN.kv("Hari", "Senin–Sabtu") + '</div>' +
+            '<div class="alert ' + verif.cls + '">' + verif.icon + ' ' + verif.label + '</div>' +
+            '<div class="kv">' + TN.kv("Nomor booth", TN.boothNoOf(tn.stallCode)) + TN.kv("Titik", TN.pick(TN.siteBySlug("gondangdia").name)) + TN.kv("Hari", TN.dayLabel((tn.days || [])[0])) + '</div>' +
           '</div>' +
           '<div class="admin-card"><h3>Pratinjau Kartu</h3>' + TN.tenantCard(tn) + '</div>' +
         '</div>' +

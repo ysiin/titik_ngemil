@@ -65,9 +65,63 @@
   }
 
   function renderTab(tab) {
-    ({ dashboard: renderDashboard, tenants: renderTenants, stalls: renderStalls,
+    ({ dashboard: renderDashboard, sites: renderSites, tenants: renderTenants, stalls: renderStalls,
       schedule: renderSchedule, applications: renderApplications, export: renderExport,
       settings: renderSettings, stats: renderStats }[tab] || function () {})();
+  }
+
+  /* ---------------- titik (nama titik editable) ---------------- */
+  function renderSites() {
+    var el = document.getElementById("tab-sites");
+    var list = db.sites || [];
+    var rows = list.map(function (s, i) {
+      var active = s.status === "active";
+      return '<tr>' +
+        '<td><b>' + esc(s.name.id) + '</b><br><span class="muted" style="font-size:.82rem">' + esc(s.name.en) + '</span></td>' +
+        '<td><span class="pill" style="' + (active ? "background:#e6fbf3;color:#06805f" : "background:#f3eee7;color:#8a817a") + '">' +
+          (active ? "Aktif" : "Coming Soon") + '</span></td>' +
+        '<td>' + esc(s.city || "—") + '</td>' +
+        '<td><b>' + (s.capacity || 0) + '</b> booth</td>' +
+        '<td><code style="font-size:.8rem">/titik/' + esc(s.slug) + '</code></td>' +
+        '<td><button class="btn btn-ghost btn-sm" data-site-edit="' + i + '">✏️ Ubah</button></td>' +
+      '</tr>';
+    }).join("");
+
+    el.innerHTML = '<h2>Titik &amp; Nama Lokasi</h2>' +
+      '<div class="admin-card" style="padding:0;overflow:hidden"><div class="table-wrap" style="box-shadow:none;border:0">' +
+      '<table><thead><tr><th>Nama titik</th><th>Status</th><th>Kota</th><th>Kapasitas</th><th>URL</th><th>Aksi</th></tr></thead><tbody>' +
+      rows + '</tbody></table></div></div>' +
+      '<div class="admin-card"><h3>Catatan</h3>' +
+      '<p class="muted mb0">Saat ini hanya <b>1 titik aktif</b>. Nama titik yang diubah di sini langsung dipakai di beranda, halaman titik, denah, dan dashboard tenant. Titik lain ditampilkan sebagai <b>Coming Soon</b>.</p></div>';
+
+    el.querySelectorAll("[data-site-edit]").forEach(function (b) {
+      b.onclick = function () { editSite(+b.dataset.siteEdit); };
+    });
+  }
+
+  function editSite(i) {
+    var s = db.sites[i];
+    if (!s) return;
+    openModal('<h3>Ubah Titik</h3>' +
+      '<p class="muted" style="font-size:.88rem">Slug <code>' + esc(s.slug) + '</code> tidak diubah agar tautan lama tetap jalan.</p>' +
+      field("Nama titik (Indonesia)", "siteNameId", s.name.id) +
+      field("Nama titik (English)", "siteNameEn", s.name.en) +
+      field("Kota", "siteCity", s.city) +
+      '<div><label>Status</label><select id="siteStatus">' +
+        '<option value="active"' + (s.status === "active" ? " selected" : "") + '>Aktif (tampil sebagai titik berjalan)</option>' +
+        '<option value="pending"' + (s.status === "pending" ? " selected" : "") + '>Coming Soon</option>' +
+      '</select></div>' +
+      field("Kapasitas booth", "siteCap", s.capacity) +
+      '<div class="flex" style="margin-top:16px"><button class="btn btn-primary" id="saveSite">Simpan</button>' +
+      '<button class="btn btn-ghost" onclick="TNAdmin.closeModal()">Batal</button></div>');
+    document.getElementById("saveSite").onclick = function () {
+      s.name.id = val("siteNameId").trim() || s.name.id;
+      s.name.en = val("siteNameEn").trim() || s.name.id;
+      s.city = val("siteCity").trim() || "—";
+      s.status = val("siteStatus");
+      s.capacity = +val("siteCap") || s.capacity;
+      touch(); closeModal(); renderSites(); toast("Titik disimpan.");
+    };
   }
 
   /* ---------------- stats (statistik pengunjung) ---------------- */
@@ -282,9 +336,21 @@
   function select(label, id, opts) { return '<div><label>' + label + '</label><select id="' + id + '">' + opts + '</select></div>'; }
   function val(id) { var e = document.getElementById(id); if (!e) return ""; if (e.tagName === "SELECT") return e.value; return e.value; }
   function esc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+  // admin memakai bahasa Indonesia untuk label data bilingual
+  function pick(obj) {
+    if (obj == null) return "";
+    if (typeof obj === "string") return obj;
+    return obj.id != null ? obj.id : (obj.en != null ? obj.en : "");
+  }
 
   /* ---------------- stalls → Jadwal Rotasi & Slot ---------------- */
-  var rotDay = localStorage.getItem("tn_rot_day") || "senin";
+  var rotDay = (function () {
+    var open = (db.days || []).filter(function (d) { return !d.closed; });
+    var saved = localStorage.getItem("tn_rot_day");
+    // abaikan hari tersimpan yang sekarang sudah libur (mis. sisa sesi lama)
+    if (saved && open.some(function (d) { return d.id === saved; })) return saved;
+    return (open[0] || { id: "jumat" }).id;
+  })();
   function renderStalls() {
     var el = document.getElementById("tab-stalls");
     var days = db.days || [];
@@ -317,7 +383,7 @@
       '<div class="flex between" style="margin-bottom:14px"><h2 class="mb0">Jadwal Rotasi &amp; Slot</h2>' +
       '<span class="pill"><b>' + filled + '</b>/' + capacity + ' slot terisi</span></div>' +
       '<div class="admin-card"><h3>Pilih titik dan hari</h3>' +
-        '<p class="muted" style="font-size:.88rem">Titik: <b>Titik Gondangdia</b> · Hari aktif Senin–Sabtu, Minggu libur (tidak bisa diklik).</p>' +
+        '<p class="muted" style="font-size:.88rem">Titik: <b>' + pick(siteBySlug("gondangdia").name) + '</b> · Hari event: Jumat (satu hari).</p>' +
         '<div class="flex">' + pills + '</div></div>' +
       '<div class="admin-card" style="padding:0;overflow:hidden"><div class="table-wrap" style="box-shadow:none;border:0">' +
         '<table><thead><tr><th>Booth</th><th>Tenant</th><th>Status</th><th>Beroperasi hari ini</th><th>Aksi</th></tr></thead><tbody>' +
@@ -345,7 +411,7 @@
       var t = tenants.find(function (x) { return x.stallCode === b.dataset.rotedit; });
       if (!t) { alert("Booth kosong, tidak ada pola rotasi."); return; }
       openModal('<h3>Ubah Pola Rotasi — ' + esc(t.brand) + '</h3>' +
-        '<p class="muted" style="font-size:.88rem">Booth ' + boothNoOf(t.stallCode) + ' · Titik Gondangdia</p>' +
+        '<p class="muted" style="font-size:.88rem">Booth ' + boothNoOf(t.stallCode) + ' · ' + pick(siteBySlug("gondangdia").name) + '</p>' +
         '<div class="flex" style="flex-wrap:wrap;gap:8px">' +
           days.filter(function (d) { return !d.closed; }).map(function (d) {
             return '<label style="font-weight:600"><input type="checkbox" style="width:auto;margin-right:6px" data-modald="' + d.id + '"' + ((t.days || []).indexOf(d.id) !== -1 ? " checked" : "") + '>' + d.label.id + '</label>';
@@ -360,6 +426,10 @@
     }; });
   }
   function boothNoOf(code) { var s = (db.stalls || []).find(function (x) { return x.code === code; }); return s && s.no ? s.no : code; }
+  function siteBySlug(slug) {
+    var list = db.sites || [];
+    return list.find(function (x) { return x.slug === slug; }) || list[0] || { name: { id: "-", en: "-" } };
+  }
 
   /* ---------------- schedule ---------------- */
   function renderSchedule() {
@@ -442,12 +512,21 @@
     s.push("-- Titik Ngemil — seed data (generated " + new Date().toISOString() + ")");
     s.push("DELETE FROM menu_items; DELETE FROM tenants; DELETE FROM stalls; DELETE FROM zones; DELETE FROM categories; DELETE FROM schedule_items; DELETE FROM events;");
     s.push(sqlEvent(db.event));
+    // titik (multi-lokasi) — nama titik bisa diubah admin
+    (db.sites || []).forEach(function (st, i) {
+      s.push("INSERT INTO sites (id,slug,status,city,name_id,name_en,blurb_id,blurb_en,address,maps_url,capacity,open_time,close_time,launch_date,sort) VALUES (" +
+        [q(st.id), q(st.slug), q(st.status), q(st.city), q(st.name.id), q(st.name.en), q((st.blurb || {}).id || ""), q((st.blurb || {}).en || ""),
+         q(st.address || ""), q(st.mapsUrl || ""), st.capacity, q(st.openTime || ""), q(st.closeTime || ""), q(st.launchDate), i].join(",") + ");");
+    });
     db.categories.forEach(function (c) { s.push("INSERT INTO categories (id,name_id,name_en,icon,color) VALUES (" + q(c.id) + "," + q(c.name.id) + "," + q(c.name.en) + "," + q(c.icon) + "," + q(c.color) + ");"); });
     db.zones.forEach(function (z) { s.push("INSERT INTO zones (id,event_id,name_id,name_en,type,color,blurb_id,blurb_en,pos_x,pos_y,pos_w,pos_h) VALUES (" + q(z.id) + "," + q(db.event.id) + "," + q(z.name.id) + "," + q(z.name.en) + "," + q(z.type) + "," + q(z.color) + "," + q(z.blurb.id) + "," + q(z.blurb.en) + "," + z.area.x + "," + z.area.y + "," + z.area.w + "," + z.area.h + ");"); });
-    db.stalls.forEach(function (st) { s.push("INSERT INTO stalls (code,event_id,zone_id,label,pos_x,pos_y,pos_w,pos_h) VALUES (" + q(st.code) + "," + q(db.event.id) + "," + q(st.zoneId) + "," + q(st.label) + "," + st.x + "," + st.y + "," + st.w + "," + st.h + ");"); });
+    db.stalls.forEach(function (st) { s.push("INSERT INTO stalls (code,no,event_id,site_id,zone_id,label,pos_x,pos_y,pos_w,pos_h,booth_status) VALUES (" + q(st.code) + "," + (st.no || 0) + "," + q(db.event.id) + "," + q(db.activeSite || "gondangdia") + "," + q(st.zoneId) + "," + q(st.label) + "," + st.x + "," + st.y + "," + st.w + "," + st.h + "," + q(st.boothStatus || "buka") + ");"); });
     db.tenants.forEach(function (t) {
-      s.push("INSERT INTO tenants (slug,event_id,brand,category_id,zone_id,stall_code,tagline_id,tagline_en,desc_id,desc_en,story_id,story_en,instagram,whatsapp,halal,tags) VALUES (" +
-        [q(t.slug), q(db.event.id), q(t.brand), q(t.categoryId), q(t.zoneId), q(t.stallCode), q(t.tagline.id), q(t.tagline.en), q(t.desc.id), q(t.desc.en), q((t.story || {}).id || ""), q((t.story || {}).en || ""), q(t.instagram || ""), q(t.whatsapp || ""), t.halal ? 1 : 0, q((t.tags || []).join(","))].join(",") + ");");
+      s.push("INSERT INTO tenants (slug,event_id,brand,category_id,zone_id,stall_code,tagline_id,tagline_en,desc_id,desc_en,story_id,story_en,instagram,whatsapp,halal,tags,site_id,booth_status,verification) VALUES (" +
+        [q(t.slug), q(db.event.id), q(t.brand), q(t.categoryId), q(t.zoneId), q(t.stallCode), q(t.tagline.id), q(t.tagline.en), q(t.desc.id), q(t.desc.en), q((t.story || {}).id || ""), q((t.story || {}).en || ""), q(t.instagram || ""), q(t.whatsapp || ""), t.halal ? 1 : 0, q((t.tags || []).join(",")), q(db.activeSite || "gondangdia"), q(t.boothStatus || "buka"), q(t.verification || "disetujui")].join(",") + ");");
+      (t.days || []).forEach(function (d) {
+        s.push("INSERT INTO tenant_days (tenant_slug,day) VALUES (" + q(t.slug) + "," + q(d) + ");");
+      });
       t.menu.forEach(function (m, i) {
         s.push("INSERT INTO menu_items (tenant_slug,name,price,desc_id,desc_en,is_signature,is_available,sort) VALUES (" +
           [q(t.slug), q(m.name), m.price, q(m.desc.id), q(m.desc.en), m.signature ? 1 : 0, m.available === false ? 0 : 1, i].join(",") + ");");

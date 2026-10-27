@@ -52,7 +52,9 @@
           '<a class="btn btn-primary" href="/daftar-tenant">Daftar Tenant</a></div>';
         return;
       }
-      document.getElementById("status-title").textContent = app.brand_name || "Pendaftaran";
+      document.getElementById("status-title").textContent = app.brand_name
+        ? "Status: " + app.brand_name
+        : "Status Pendaftaran";
       var stage = app.stage || "terkirim";
       var decision = ["disetujui", "perlu-revisi", "ditolak"].indexOf(stage) !== -1;
       var stageIdx = STAGES.indexOf(stage);
@@ -83,7 +85,7 @@
 
       wrap.innerHTML =
         '<div class="map-layout">' +
-          '<div class="panel"><h3>' + (app.brand_name || "-") + ' ' + badge + '</h3>' +
+          '<div class="panel"><h3>' + (app.brand_name || "-") + '</h3><div style="margin-bottom:12px">' + badge + '</div>' +
             '<div class="kv">' +
               '<div class="kv-row"><span>ID</span><b>' + app.id + '</b></div>' +
               '<div class="kv-row"><span>Kategori</span><b>' + (app.category || "-") + '</b></div>' +

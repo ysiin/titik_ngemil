@@ -1,14 +1,14 @@
 # 🍢 Titik Ngemil
 
-**Pasar harian PKL terkurasi** — titik perdana di kawasan **Stasiun Gondangdia, Jakarta Pusat**.
-Bukan event sekali jalan: Titik Ngemil beroperasi **harian** (Senin–Sabtu) dengan pola rotasi tenant, dan **30 Oktober 2026** adalah hari peluncuran.
+**Pop-up market PKL terkurasi** — titik perdana di **Lorong Srikaya, Gondangdia, Jakarta Pusat**.
+Event perdana berlangsung **satu hari**: Jumat, **30 Oktober 2026**, 14.00–22.00 WIB. Titik lain masih berstatus **Coming Soon**.
 
 > Website publik + 2 Dashboard (Tenant & Admin) + Database (Cloudflare D1), siap deploy ke **Cloudflare Pages** lewat Git (commit → otomatis live).
 
-- **Peluncuran:** Jumat, **30 Oktober 2026**, 14.00–22.00 WIB
-- **Jam operasional:** Senin–Sabtu, 14.00–22.00 WIB · **Minggu libur**
-- **Titik:** 1 aktif (Gondangdia) + 3 dalam rencana
-- **Referensi gaya:** Brightspot Market (tenant terkurasi, zona bernama, gratis masuk)
+- **Event:** 1 acara, **1 hari** (Jumat, 30 Oktober 2026), 14.00–22.00 WIB
+- **Titik:** 1 aktif (**Lorong Srikaya**, nama bisa diubah admin) + 3 Coming Soon
+- **Booth:** 1 lorong, **24 booth** bernomor (B01–B24)
+- **Referensi gaya:** Brightspot Market (tenant terkurasi, booth bernomor, gratis masuk)
 - **Stack:** Static HTML/CSS/JS + Cloudflare Pages Functions + Cloudflare D1
 
 ---
@@ -18,16 +18,16 @@ Bukan event sekali jalan: Titik Ngemil beroperasi **harian** (Senin–Sabtu) den
 | Route | Halaman |
 |---|---|
 | `/` | Beranda (`#peta`, `#jadwal`, `#tenant`) |
-| `/titik` | Indeks titik (aktif + rencana) |
-| `/titik/gondangdia` | Hub titik aktif |
-| `/titik/gondangdia/denah` | Denah booth interaktif (`?booth=04`) |
+| `/titik` | Indeks titik (1 aktif + 3 Coming Soon) |
+| `/titik/gondangdia` | Hub titik aktif (nama tampilan: **Lorong Srikaya**) |
+| `/titik/gondangdia/denah` | Denah booth interaktif, 24 booth (`?booth=7`) |
 | `/menu` · `/menu?slug=` | Indeks menu · menu lengkap tenant |
 | `/tenant` · `/tenant-detail?slug=` | Direktori tenant · detail tenant |
 | `/daftar-tenant` | Form pendaftaran tenant (+ Simpan Draf) |
 | `/daftar-tenant/status?id=` | Status verifikasi pendaftar |
 | `/masuk` | Login tenant & admin |
 | `/dashboard/tenant` | Dashboard tenant (toggle booth BUKA/TUTUP/HABIS) |
-| `/dashboard/admin?tab=` | Dashboard admin (ringkasan, persetujuan, rotasi & slot, statistik) |
+| `/dashboard/admin?tab=` | Dashboard admin (ringkasan, titik, persetujuan, slot, statistik) |
 | `/jadwal` · `/kunjungan` · `/partner` · `/tentang` | Halaman pendukung |
 | `/syarat` · `/privasi` · `/kontak` · `404` | Halaman statis & error |
 
@@ -153,10 +153,11 @@ Login dulu di `/masuk` (pilih peran **Tenant**). Berisi: jadwal saya, profil & m
 ### Dashboard Admin — `/dashboard/admin`
 Login dulu di `/masuk` (pilih peran **Admin**). Tab:
 - **Ringkasan** — jumlah tenant, lapak, pendaftaran.
+- **Titik** — ubah **nama titik** (ID & EN), kota, status (Aktif / Coming Soon), dan kapasitas booth. Perubahan langsung dipakai di beranda, halaman titik, denah, dan dashboard tenant.
 - **Persetujuan** — keputusan **Setujui / Minta Revisi / Tolak** + catatan verifikasi lapangan.
-- **Jadwal Rotasi & Slot** — pilih titik & hari, counter **`x/24 slot terisi`**, ubah pola rotasi per tenant.
+- **Jadwal Rotasi & Slot** — hari event (Jumat), counter **`x/24 slot terisi`**, checklist "beroperasi hari ini" per tenant.
 - **Tenant / Acara** — kelola konten.
-- **Statistik** — estimasi pengunjung unik per titik & hari.
+- **Statistik** — estimasi pengunjung unik per titik.
 - **Export / Deploy** — unduh `db.js`/`seed.sql` atau push ke API/D1.
 
 > **Demo login:** sandi apa saja. Sesi & data dashboard disimpan di browser (localStorage) sehingga berfungsi tanpa D1.
@@ -204,7 +205,7 @@ Auth admin: header `Authorization: Bearer <ADMIN_TOKEN>`.
 
 ## 📊 Ringkasan Data Saat Ini
 
-- **4** titik (1 aktif + 3 rencana), **5** zona tematik, **24** lapak, **24** tenant, **96** entri rotasi hari, **71** menu item, **7** item jadwal.
+- **4** titik (1 aktif **Lorong Srikaya** + 3 Coming Soon), **1** zona (lorong), **24** booth, **24** tenant, **24** entri hari operasional, **71** menu item, **7** item jadwal.
 - Kategori: Kuliner, Minuman, Jajanan, Dessert, Non-Food.
 
 ---

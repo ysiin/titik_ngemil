@@ -358,35 +358,34 @@ Guard: akses /dashboard/tenant tanpa login ──▶ Redirect /masuk
 
 ## 7. Zonasi & Tata Lapak (FINAL untuk event #1)
 
-Mengikuti pola Brightspot (zona bernama, bukan sekadar nomor kios). **Sudah diimplementasikan:**
+Keputusan final: **1 event, 1 hari (Jumat 30 Okt 2026), 1 titik aktif, 1 lorong**. Titik lain hanya ditampilkan sebagai **Coming Soon**.
 
-| Zona | Tipe | Isi | Jumlah Lapak |
+| Zona | Tipe | Isi | Jumlah Booth |
 |---|---|---|---|
-| **Pintu Gondangdia** | gate | Gerbang masuk & titik temu; kopi, minuman, merchandise | 4 (A01–A04) |
-| **Panggung Ngemil** | stage | Musik, talkshow, workshop (non-jualan) | – |
-| **Lorong Srikaya** | indoor | Jalur kuliner utama, porsi berat | 6 (B01–B06) |
-| **Taman Cut Meutia** | outdoor | Area terbuka untuk jajan santai | 8 (C01–C08) |
-| **Pelataran Transit** | outdoor | Dekat area transit & drop off | 6 (D01–D06) |
+| **Lorong Srikaya** | outdoor | Satu lorong kuliner; 24 booth mengapit jalan tengah | 24 (B01–B24) |
 
-Total: **5 zona, 24 lapak, 24 tenant (1 lapak = 1 tenant).**
+Nama titik (**Lorong Srikaya**) dapat diubah admin lewat **Dashboard Admin → tab Titik**, tanpa mengubah slug URL (`/titik/gondangdia` tetap stabil).
+
+Total: **1 zona, 24 booth, 24 tenant (1 booth = 1 tenant).** Baris atas B01–B12, baris bawah B13–B24.
 
 ---
 
 ## 7.5 Status Implementasi
 
-> Status per **27 Okt 2026**. Situs **diperluas** (bukan dibangun ulang) agar selaras dengan flow asli di §6.
+> Status per **28 Okt 2026**. Situs **diperluas** (bukan dibangun ulang) agar selaras dengan flow asli di §6.
 
 | Komponen | Status |
 |---|---|
-| Beranda + section `#peta` / `#tenant` / `#jadwal` + tab titik (1 aktif + 3 pending) + hari aktif | ✅ Selesai |
+| Beranda + section `#peta` / `#tenant` / `#jadwal` + tab titik (1 aktif + 3 Coming Soon) + hari aktif | ✅ Selesai |
 | Multi-titik: `/titik` (indeks), `/titik/gondangdia` (hub) | ✅ Selesai |
-| Denah booth interaktif (`/titik/gondangdia/denah?booth=N`) + tabel + status booth | ✅ Selesai |
+| Denah booth interaktif 24 booth (`/titik/gondangdia/denah?booth=N`) + legend + tabel (jadi kartu di mobile) | ✅ Selesai |
+| **Nama titik editable admin** (tab Titik: nama ID/EN, kota, status, kapasitas) | ✅ Selesai |
 | Menu: indeks `/menu` + detail `/menu?slug=` | ✅ Selesai |
 | Pendaftaran tenant `/daftar-tenant` (+ Simpan Draf) → status `/daftar-tenant/status?id=` (Terkirim→Ditinjau→Verifikasi→keputusan) | ✅ Selesai |
 | Login `/masuk` (tenant & admin) + guard dashboard | ✅ Selesai |
 | Dashboard Tenant `/dashboard/tenant` (jadwal, profil & menu, verifikasi, toggle booth BUKA/TUTUP/HABIS) | ✅ Selesai |
-| Dashboard Admin `/dashboard/admin` (ringkasan, persetujuan, jadwal rotasi & slot `x/24`, statistik) | ✅ Selesai |
-| Rotasi harian (hari aktif Senin–Sabtu, Minggu libur) + pola rotasi per tenant | ✅ Selesai |
+| Dashboard Admin `/dashboard/admin` (ringkasan, titik, persetujuan, slot `x/24`, statistik, export) | ✅ Selesai |
+| Hari event: **Jumat saja** (hari lain disimpan sebagai `closed` agar bisa diaktifkan lagi) | ✅ Selesai |
 | Halaman statis: `/tentang`, `/syarat`, `/privasi`, `/kontak`, `404` | ✅ Selesai |
 | Bilingual ID/EN (toggle, tersimpan di browser) | ✅ Selesai |
 | Database D1 (schema + seed + API) — termasuk `sites`, `tenant_days`, `booth_status`, `applications` | ✅ Selesai |
@@ -396,8 +395,10 @@ Total: **5 zona, 24 lapak, 24 tenant (1 lapak = 1 tenant).**
 
 ### Keputusan implementasi (hasil konfirmasi owner)
 - **Scope:** *extend* situs yang sudah ada, bukan full rebuild.
+- **Event:** hanya **1 acara, 1 hari (Jumat 30 Okt 2026)**; lokasi lain "Coming Soon".
+- **Titik aktif:** hanya **satu**, yaitu **Lorong Srikaya** di Gondangdia; namanya bisa diubah admin.
 - **QR check-in:** belum diaktifkan (lokasi stasiun). Kolom statistik digital disiapkan untuk nanti.
-- **Kuota booth:** **24 lapak** per titik.
+- **Kuota booth:** **24 booth** dalam satu lorong.
 
 ---
 

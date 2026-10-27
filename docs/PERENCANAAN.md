@@ -213,25 +213,146 @@ karena paling cepat live, tanpa build, dan sudah termasuk database + admin.
 
 ## 6. Flow / Alur Pengguna
 
-> Catatan: gambar flow (`Disinting Kel 5.png`) belum ditemukan di folder saat dikerjakan, sehingga
-> alur di bawah adalah versi yang **sudah diimplementasikan** pada website. Begitu gambar diterima,
-> sesuaikan 1:1 bila ada perbedaan.
+> Sumber: **`Disinting Kel 5.png`** (ditemukan & dibaca). Gambar adalah **sitemap + flow lengkap**.
+> Isi di bawah adalah hasil ekstraksi. Tanda ⚠️ = bagian yang perlu konfirmasi (kemungkinan OCR kurang presisi).
 
-**1. Pengunjung**
-Beranda → Jelajah tenant (filter kategori/zona + search) → Detail tenant (cerita, menu, harga) →
-Peta lapak interaktif (klik lapak → popup tenant) → Jadwal acara → Kunjungan/cara ke lokasi.
+### 6.1 Peta Halaman (Route)
 
-**2. Calon tenant**
-Beranda/pages → Halaman **Gabung** → Baca kriteria kurasi & skema sewa → Isi formulir →
-POST `/api/applications` (tersimpan di D1; fallback: localStorage) → Tim kurasi review → Interview →
-Approved → Assign lapak → Tampil di direktori.
+| Route | Halaman |
+|---|---|
+| `/` | Beranda (section: `#peta`, `#jadwal`, `#tenant`) |
+| `/titik` | Indeks Titik (opsional) |
+| `/titik/gondangdia` | Hub Titik Aktif |
+| `/titik/gondangdia/denah` | Denah Booth |
+| `/titik/gondangdia/hari-ini` | Titik Hari Ini (QR check-in) |
+| `/menu` | Indeks Menu (opsional) |
+| `/menu/slug` | Menu Lengkap Tenant |
+| `/q/kode` | Validasi QR (redirect) |
+| `/daftar-tenant` | Form Pendaftaran Tenant |
+| `/daftar-tenant/status/id` | Status Verifikasi Pendaftar |
+| `/masuk` | Login Tenant & Admin |
+| `/dashboard/tenant` | Dashboard Tenant |
+| `/dashboard/admin` | Dashboard Admin |
+| `/dashboard/admin/persetujuan` | Persetujuan Tenant |
+| `/dashboard/admin/jadwal` | Jadwal Rotasi & Slot |
+| `/dashboard/admin/statistik` | Statistik Pengunjung |
+| `/tentang` | Tentang Kami |
+| `/syarat` | Syarat & Ketentuan |
+| `/privasi` | Kebijakan Privasi |
+| `/kontak` | Kontak Pengelola |
+| `404` | Halaman tidak ditemukan |
 
-**3. Admin / Kurator**
-`/admin/` → Login → Dashboard (statistik & distribusi) → Kelola tenant & menu → Atur zona & lapak →
-Kelola jadwal acara → Inbox **Pendaftaran** → **Export/Deploy** (unduh `db.js`/`seed.sql` atau Push ke D1).
+### 6.2 Flow Pengunjung (dengan QR check-in anonim)
 
-**4. Sponsor / Partner**
-Landing → Halaman **Partner** (paket tier) → Hubungi tim kemitraan (email/WhatsApp).
+```
+/titik/gondangdia/hari-ini
+      │
+   Banner privasi ──▶ /privasi
+      │
+   Scan QR di lokasi ──▶ /q/kode
+      │
+   Validasi kode di server
+      ├── Kedaluwarsa ──▶ State 3: QR kedaluwarsa ──▶ Scan ulang QR
+      └── Valid
+            │
+         "Loading: mencatat kunjungan anonim"
+            │
+         Pencatatan berhasil?
+            ├── Tidak ──▶ Banner gagal: "Kunjungan belum tercatat" ──▶ [Coba lagi]
+            └── Ya ──▶ Toast: "Kunjungan tercatat (anonim)" (hilang 3 detik)
+                        │
+                   Konten lengkap: denah + daftar tenant
+                        │
+                   /titik/gondangdia/denah
+                        ├── Klik booth ──▶ Panel booth ?booth=04
+                        │                     ├── Lihat Menu Lengkap ──▶ /menu/slug
+                        │                     ├── Petunjuk Arah (Google Maps, tab baru)
+                        │                     └── Kembali ke daftar tenant ──▶ /titik/gondangdia
+                        └── Lihat jadwal hari ini
+```
+Tersedia juga: **"Lanjut tanpa mencatat / Browse saja"** → konten tampil tanpa pencatatan.
+
+### 6.3 Flow Beranda (Pengunjung)
+
+- **Hero**: chip kategori atau cari (search) di hero.
+- Scroll ke **Peta Titik** (`#peta`) → "Lihat Denah Lapak" → Titik Gondangdia (aktif) → `/titik/gondangdia/denah`.
+- Scroll ke **Tenant** (`#tenant`) → preview hasil; "Lihat semua 16 tenant"; **"Tampilkan 8 kartu berikutnya"** (load more, halaman sama).
+- Tab titik: **Gondangdia aktif**; **"3 Titik Lain (pending)"** tidak bisa diklik (badge Pending).
+- **Hari**: "Hari aktif Senin–Sabtu"; **"Minggu (libur)"** tidak bisa diklik.
+- Scroll ke **Jadwal** (`#jadwal`).
+- Tenant card → "Lihat Menu (kartu)" → `/menu/slug`; "Lihat di Peta (kartu aktif)".
+
+### 6.4 Flow Calon Tenant (Pendaftaran → Verifikasi)
+
+```
+Tombol "Daftar Tenant" (navbar, CTA Beranda, footer)
+      │
+   /daftar-tenant  ──[Simpan Draf]
+      │
+   Data wajib lengkap + checkbox S&K dicentang?
+      ├── Tidak ──▶ (tetap di form / validasi)
+      └── Ya ──▶ Kirim pendaftaran ──▶ /daftar-tenant/status/id
+                    │
+                 Stage: Terkirim
+                    │
+                 Stage: Ditinjau pengelola
+                    │
+                 Stage: Verifikasi (catat hasil verifikasi lapangan)
+                    │
+                 Keputusan admin
+                    ├── Disetujui ──▶ Status: Disetujui (nomor booth, titik, hari)
+                    ├── Tolak     ──▶ Status: Ditolak (alasan ditampilkan) ──▶ Hubungi Pengelola /kontak
+                    └── Minta Revisi ──▶ Status: Perlu revisi ──▶ tombol "Perbaiki Data" ──▶ /daftar-tenant
+```
+
+### 6.5 Flow Dashboard Tenant
+
+```
+/masuk (login tenant)
+   ├── Login gagal ──▶ tampilkan error
+   └── Berhasil ──▶ /dashboard/tenant
+        ├── Jadwal saya
+        ├── Profil & menu
+        ├── Status verifikasi
+        └── Toggle status booth: BUKA / TUTUP / HABIS
+              └── Tampil real-time di /titik/gondangdia & denah
+Guard: akses /dashboard/tenant tanpa login ──▶ Redirect /masuk
+```
+
+### 6.6 Flow Dashboard Admin
+
+```
+/masuk (login admin)
+   └── /dashboard/admin
+        ├── Ringkasan (jumlah menunggu persetujuan)
+        ├── Persetujuan Tenant
+        │     ├── Catat hasil verifikasi lapangan
+        │     └── Keputusan: Setujui / Tolak / Minta Revisi
+        ├── Jadwal Rotasi & Slot
+        │     ├── Pilih titik dan hari
+        │     ├── Slot terisi x/16 booth
+        │     ├── Isi nomor booth, titik, dan hari
+        │     └── Ubah Pola Rotasi
+        ├── Statistik Pengunjung
+        │     ├── Estimasi pengunjung unik per titik dan hari
+        │     ├── Jam ramai
+        │     └── Digital (QR) vs hitungan manual
+        ├── Pengaturan QR
+        │     ├── Generate QR dinamis per titik (per jam atau per hari)
+        │     └── Cetak dan tempel di lokasi
+        └── Keluar
+```
+
+### 6.7 Konsep Kunci (yang membedakan dari asumsi awal)
+
+1. **QR check-in anonim** untuk statistik pengunjung (privasi dijaga, ada opsi tanpa pencatatan).
+2. **Multi-titik**: Gondangdia aktif + 3 titik lain berstatus *pending*.
+3. **Rotasi PKL per hari**: hari aktif Senin–Sabtu, Minggu libur; tiap titik punya kuota (contoh 16 booth) yang berubah per hari.
+4. **Booth** sebagai unit: `?booth=04`, panel booth, status booth (BUKA/TUTUP/HABIS) yang diubah tenant & tampil real-time.
+5. **Dua dashboard** (tenant & admin) dengan login + guard.
+6. **Alur verifikasi pendaftaran** berjenjang (Terkirim → Ditinjau → Verifikasi → Keputusan).
+
+> ⚠️ **Perlu konfirmasi owner:** (a) angka kuota booth final per titik (contoh di gambar: 16), (b) pola rotasi pastinya (berapa tenant per hari), (c) apakah "3 titik lain" sudah difinalkan namanya, (d) apakah statistik pengunjung wajib berfungsi (butuh backend) atau cukup simulasi.
 
 ---
 

@@ -87,61 +87,85 @@ titik_ngemil/
 
 ## 🚀 Deploy ke Cloudflare (commit → auto live)
 
-### 1. Push ke GitHub
+> Repo: **https://github.com/ysiin/titik_ngemil** — branch `main` sudah berisi kode siap deploy.
+
+### 1. Push perubahan
+
+Repo sudah terhubung ke GitHub. Setelah mengubah kode:
 
 ```bash
-cd titik_ngemil
-git init
-git add .
-git commit -m "feat: Titik Ngemil website + dashboard + D1"
-git branch -M main
-git remote add origin https://github.com/<username>/titik-ngemil.git
-git push -u origin main
+git add -A
+git commit -m "pesan perubahan"
+git push
 ```
 
 ### 2. Sambungkan ke Cloudflare Pages
 
 1. Buka **Cloudflare Dashboard → Workers & Pages → Create → Pages → Connect to Git**.
-2. Pilih repo `titik-ngemil`.
+2. Pilih repo `titik-ngemil` (branch `main`).
 3. Isi **Build settings**:
    - **Framework preset:** `None`
    - **Build command:** *(kosongkan — tidak ada build step)*
    - **Build output directory:** `public`
-4. **Save and Deploy.** Situs langsung live di `https://<nama>.pages.dev`.
-   > Setiap `git push` ke `main` akan otomatis men-deploy ulang. ✅
+4. **Save and Deploy.** Situs live di `https://titik-ngemil.pages.dev`.
+   > Setiap `git push` ke `main` otomatis deploy ulang. ✅
 
-### 3. (Opsional) Aktifkan Database D1
+Folder `functions/` ikut terpakai otomatis — tidak perlu diatur.
 
-Website publik sudah jalan tanpa database (data dari `data/db.js`). D1 diperlukan untuk **pendaftaran tenant**, **status booth**, dan **push data dari Admin**.
+### 3. Buat database D1 + isi data
+
+D1 dipakai untuk **pendaftaran tenant**, **status booth**, dan **push data dari Admin**.
+Situs publik tetap jalan tanpa D1 (data dibaca dari `public/data/db.js`).
+
+**Cara A — lewat dashboard (tanpa install apa pun):**
+
+1. **Cloudflare Dashboard → Storage & Databases → D1 SQL Database → Create**
+   - Name: `titik-ngemil-db`
+2. Buka database itu → tab **Console**, lalu tempel isi `schema.sql` → **Execute**.
+3. Ulangi: tempel isi `seed.sql` → **Execute**.
+4. Cek: jalankan `SELECT COUNT(*) FROM tenants;` → harus **24**.
+
+**Cara B — lewat terminal:**
 
 ```bash
-# a. Buat database
-npx wrangler d1 create titik-ngemil-db
-#    → salin "database_id" yang muncul
-
-# b. Buat tabel
-npx wrangler d1 execute titik-ngemil-db --remote --file=./schema.sql
-
-# c. Isi data awal
-npx wrangler d1 execute titik-ngemil-db --remote --file=./seed.sql
+npx.cmd wrangler d1 create titik-ngemil-db   # salin database_id yang muncul
+npx.cmd wrangler d1 execute titik-ngemil-db --remote --file=./schema.sql
+npx.cmd wrangler d1 execute titik-ngemil-db --remote --file=./seed.sql
 ```
 
-**Bind ke Pages:** Dashboard → project → **Settings → Functions → D1 database bindings**
-→ **Variable name: `DB`** → pilih database `titik-ngemil-db`.
+### 4. Hubungkan D1 ke Pages
 
-**Set token admin:** Dashboard → **Settings → Environment variables**
-→ tambah `ADMIN_TOKEN` = token rahasia pilihan kamu (Production).
+**Pages project → Settings → Functions → D1 database bindings → Add binding**
 
-### 4. Local development (opsional)
+| Field | Isi |
+|---|---|
+| Variable name | `DB` |
+| D1 database | `titik-ngemil-db` |
+
+Lalu **Settings → Environment variables → Add**:
+
+| Name | Value |
+|---|---|
+| `ADMIN_TOKEN` | token rahasia buatan kamu (dipakai tombol "Push ke API" di admin) |
+
+Setelah binding disimpan, **redeploy** (Deployments → ⋯ → Retry deployment) agar binding aktif.
+
+### 5. Cek hasilnya
+
+- `https://titik-ngemil.pages.dev/api/sites` → JSON berisi 4 titik.
+  Kalau muncul `Database D1 belum terhubung` → binding `DB` belum aktif.
+- Kirim formulir di `/daftar-tenant` → lalu cek `SELECT COUNT(*) FROM applications;` bertambah.
+
+### 6. Local development (opsional)
 
 ```bash
-npm install
-npm run dev            # wrangler pages dev public --d1=DB
+npm.cmd install
+npm.cmd run dev        # wrangler pages dev public --d1=DB
 # buka http://localhost:8788
 ```
 
-> ⚠️ Di Windows, jika PowerShell memblokir `npm`, gunakan `npm.cmd` / `npx.cmd`.
-> Jika `wrangler d1 execute --local` kehabisan memori, gunakan `--remote` atau `npx.cmd --yes wrangler@3`.
+> ⚠️ PowerShell di mesin ini memblokir `npm`/`npx` (ExecutionPolicy `Restricted`), jadi **pakai `npm.cmd` / `npx.cmd`**.
+> Untuk preview tanpa wrangler: `npm.cmd run dev:static` (API `/api/*` balas 501, sisanya normal).
 
 ---
 

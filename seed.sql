@@ -1,15 +1,15 @@
--- Titik Ngemil — seed data (generated 2026-10-27T19:32:29.122Z)
+-- Titik Ngemil — seed data (generated 2026-10-27T21:11:44.378Z)
 -- Jalankan: wrangler d1 execute titik-ngemil-db --remote --file=./seed.sql
 
 DELETE FROM tenant_days;
 DELETE FROM menu_items;
 DELETE FROM tenants;
 DELETE FROM stalls;
+DELETE FROM applications;
 DELETE FROM zones;
+DELETE FROM schedule_items;
 DELETE FROM sites;
 DELETE FROM categories;
-DELETE FROM schedule_items;
-DELETE FROM applications;
 DELETE FROM events;
 
 INSERT INTO events (id,slug,name_id,name_en,theme_id,theme_en,event_date,start_time,end_time,venue_id,venue_en,address,city,maps_url,hashtag,status) VALUES ('tn-2026-01','titik-ngemil-1','Titik Ngemil #1','Titik Ngemil #1','Rapi Rasa Gondangdia','Tidy Tastes of Gondangdia','2026-10-30','14:00','22:00','Lorong Srikaya, Gondangdia','Srikaya Lane, Gondangdia','Jl. Srikaya II, Kebon Sirih, Kec. Menteng, Jakarta Pusat 10340','Jakarta Pusat','https://maps.google.com/?q=Stasiun+Gondangdia+Jakarta','#TitikNgemil','published');

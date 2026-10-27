@@ -29,11 +29,11 @@ out.push("DELETE FROM tenant_days;");
 out.push("DELETE FROM menu_items;");
 out.push("DELETE FROM tenants;");
 out.push("DELETE FROM stalls;");
+out.push("DELETE FROM applications;");
 out.push("DELETE FROM zones;");
+out.push("DELETE FROM schedule_items;");
 out.push("DELETE FROM sites;");
 out.push("DELETE FROM categories;");
-out.push("DELETE FROM schedule_items;");
-out.push("DELETE FROM applications;");
 out.push("DELETE FROM events;");
 out.push("");
 

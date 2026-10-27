@@ -513,8 +513,8 @@
     s.push("-- Jalankan: wrangler d1 execute titik-ngemil-db --remote --file=./seed.sql");
     s.push("");
     // urutan penting: anak dulu, induk belakangan (FK)
-    s.push(["tenant_days", "menu_items", "tenants", "stalls", "zones", "sites",
-      "categories", "schedule_items", "applications", "events"]
+    s.push(["tenant_days", "menu_items", "tenants", "stalls", "applications",
+      "zones", "schedule_items", "sites", "categories", "events"]
       .map(function (tb) { return "DELETE FROM " + tb + ";"; }).join("\n"));
     s.push(sqlEvent(db.event));
     // titik (multi-lokasi) — nama titik bisa diubah admin

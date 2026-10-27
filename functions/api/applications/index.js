@@ -2,7 +2,7 @@
    GET  -> daftar pendaftaran (butuh admin token)
    POST -> kirim pendaftaran tenant (publik)
 */
-import { json, err, requireDB, readBody, isAdmin } from "../_shared.js";
+import { json, err, requireDB, readBody, isAdmin } from "../../_shared.js";
 
 export async function onRequestGet({ request, env }) {
   const db = requireDB(env);

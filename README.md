@@ -156,7 +156,33 @@ Setelah binding disimpan, **redeploy** (Deployments → ⋯ → Retry deployment
   Kalau muncul `Database D1 belum terhubung` → binding `DB` belum aktif.
 - Kirim formulir di `/daftar-tenant` → lalu cek `SELECT COUNT(*) FROM applications;` bertambah.
 
-### 6. Local development (opsional)
+### 6. Troubleshooting
+
+**`[ERROR] It looks like you've run a Workers-specific command in a Pages project`**
+atau log berisi `Executing user deploy command: npx wrangler deploy`
+
+Artinya project dibuat sebagai **Worker** (Workers Builds), bukan **Pages**.
+Project Worker selalu menjalankan deploy command `npx wrangler deploy`, sedangkan
+repo ini proyek Pages (`wrangler.toml` hanya punya `pages_build_output_dir`,
+tanpa `main` / `[assets]`). Dua jenis project ini **tidak bisa saling tukar**.
+
+Perbaikan — hapus lalu buat ulang sebagai Pages:
+
+1. **Workers & Pages** → buka project yang salah → **Settings** → **Delete project**.
+   (Wajib dihapus dulu, karena nama project dipakai bersama oleh Worker & Pages.)
+2. **Create application** → **Pages** → **Connect to Git** → pilih repo `titik-ngemil`.
+3. Build command **kosong**, build output directory **`public`** → **Save and Deploy**.
+
+> Mengganti deploy command menjadi `npx wrangler pages deploy public` di
+> **Settings → Build → Deploy command** memang bisa, tetapi token API yang dibuat
+> otomatis oleh Workers Builds hanya punya izin Workers (tanpa izin Pages),
+> sehingga deploy tetap gagal dengan error autentikasi. Buat project Pages baru.
+
+**`The version of Wrangler you are using is now out-of-date`**
+Hanya peringatan, bukan penyebab gagal. Pada alur Pages, Wrangler tidak dipakai
+untuk deploy (Cloudflare sendiri yang meng-upload `public/`), jadi aman diabaikan.
+
+### 7. Local development (opsional)
 
 ```bash
 npm.cmd install

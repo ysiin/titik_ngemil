@@ -196,50 +196,72 @@ Catatan: setiap entitas konten memiliki field `_id` dan `_en` untuk bilingual. `
 
 Kebutuhan: situs publik cepat + SEO + bilingual + **admin dashboard** + peta interaktif + CRUD data.
 
-**Rekomendasi utama:**
-- **Next.js 15 (App Router)** — SSR/SSG, SEO, routing bilingual.
-- **Payload CMS v3** — admin dashboard bawaan, i18n/localization, RBAC/roles, media library, audit log → hemat banyak kerja admin.
-- **Postgres** (Supabase atau Neon) sebagai database.
-- **Tailwind CSS + shadcn/ui** untuk UI.
-- **Vercel** untuk deploy (atau Cloudflare).
-- **Peta interaktif**: denah SVG kustom + library ringan (mis. `react-zoom-pan-pinch`), basemap opsional via MapLibre kalau mau peta geografis asli.
+**Rekomendasi utama (yang DIIMPLEMENTASIKAN):**
+- **Static HTML/CSS/JS** untuk situs publik — tanpa build step, deploy instan ke Cloudflare Pages, SEO-friendly.
+- **Cloudflare Pages Functions** untuk API (`/functions/api/*`).
+- **Cloudflare D1** (SQLite) sebagai database.
+- **Admin Dashboard** client-side (`/admin/`) dengan opsi sinkron ke D1.
 
-**Alternatif:**
-- **Astro + Directus/Strapi** — situs publik super ringan, admin terpisah. Cocok kalau fokus murni konten & peta statis.
-- **Next.js + Supabase (auth + Postgres + Storage) + admin custom** — kontrol penuh, tapi bikin dashboard dari nol lebih lama.
+**Alternatif (untuk pengembangan lanjutan):**
+- **Astro + Directus/Strapi** — situs ringan, admin terpisah.
+- **Next.js + Payload CMS + Postgres** — bila butuh CMS penuh, RBAC, media library, audit log.
 
-**Keputusan yang perlu diambil:** Payload (admin cepat) vs Supabase (fleksibel). → *TBD*
+**Keputusan:** untuk kebutuhan event 30 Okt 2026 (3 hari), dipilih stack Cloudflare-native di atas
+karena paling cepat live, tanpa build, dan sudah termasuk database + admin.
 
 ---
 
 ## 6. Flow / Alur Pengguna
 
-> ⚠️ **TBD** — gambar flow yang dikirim owner **belum ditemukan di folder** `D:\Tugas Kuliah\desting\titik_ngemil` (folder terkonfirmasi kosong saat dicek). Gambar juga tidak ter-omit saja, tapi tidak ada di disk.
->
-> **Aksi yang dibutuhkan:** simpan ulang gambar ke folder `titik_ngemil`, atau beri tahu path/nama filenya. Begitu ada, bagian ini diisi 1:1 sesuai flow owner.
-> Sementara, asumsi alur yang akan dipetakan:
-> 1. **Pengunjung**: Landing → Jelajah tenant/kategori → Lihat detail & menu → Cek peta lapak → Cek jadwal → Cari rute ke lokasi.
-> 2. **Calon tenant**: Landing → Baca syarat kurasi → Isi form → Konfirmasi → Tim review/interview → Approved → Onboarding & upload data.
-> 3. **Admin/kurator**: Login → Review aplikasi → Approve → Assign lapak → Input tenant + menu → Publish → Pantau.
-> 4. **Sponsor**: Landing → Lihat paket → Hubungi partnership.
->
-> Begitu gambar diterima, bagian ini akan disesuaikan agar 1:1 dengan flow owner.
+> Catatan: gambar flow (`Disinting Kel 5.png`) belum ditemukan di folder saat dikerjakan, sehingga
+> alur di bawah adalah versi yang **sudah diimplementasikan** pada website. Begitu gambar diterima,
+> sesuaikan 1:1 bila ada perbedaan.
+
+**1. Pengunjung**
+Beranda → Jelajah tenant (filter kategori/zona + search) → Detail tenant (cerita, menu, harga) →
+Peta lapak interaktif (klik lapak → popup tenant) → Jadwal acara → Kunjungan/cara ke lokasi.
+
+**2. Calon tenant**
+Beranda/pages → Halaman **Gabung** → Baca kriteria kurasi & skema sewa → Isi formulir →
+POST `/api/applications` (tersimpan di D1; fallback: localStorage) → Tim kurasi review → Interview →
+Approved → Assign lapak → Tampil di direktori.
+
+**3. Admin / Kurator**
+`/admin/` → Login → Dashboard (statistik & distribusi) → Kelola tenant & menu → Atur zona & lapak →
+Kelola jadwal acara → Inbox **Pendaftaran** → **Export/Deploy** (unduh `db.js`/`seed.sql` atau Push ke D1).
+
+**4. Sponsor / Partner**
+Landing → Halaman **Partner** (paket tier) → Hubungi tim kemitraan (email/WhatsApp).
 
 ---
 
-## 7. Zonasi & Tata Lapak (konsep awal)
+## 7. Zonasi & Tata Lapak (FINAL untuk event #1)
 
-Mengikuti pola Brightspot (zona bernama, bukan sekadar nomor kios):
+Mengikuti pola Brightspot (zona bernama, bukan sekadar nomor kios). **Sudah diimplementasikan:**
 
-| Zona usulan | Karakter | Isi |
-|---|---|---|
-| **Pintu Masuk / Welcome** | Area sambut | Info, tenant jajanan cepat, signage |
-| **Jalur Kuliner (Food Lane)** | Kloister makanan utama | Tenant kuliner berat & minuman |
-| **Taman Ngemil (Outdoor)** | Area terbuka / taman | Snack, dessert, tenant outdoor |
-| **Sudut Jajan (Snack Corner)** | Ringkas | Jajanan kecil, kaki lima klasik |
-| **Panggung / Stage** | Non-jualan | Musik, talkshow, workshop |
+| Zona | Tipe | Isi | Jumlah Lapak |
+|---|---|---|---|
+| **Pintu Gondangdia** | gate | Gerbang masuk & titik temu; kopi, minuman, merchandise | 4 (A01–A04) |
+| **Panggung Ngemil** | stage | Musik, talkshow, workshop (non-jualan) | – |
+| **Lorong Srikaya** | indoor | Jalur kuliner utama, porsi berat | 6 (B01–B06) |
+| **Taman Cut Meutia** | outdoor | Area terbuka untuk jajan santai | 8 (C01–C08) |
+| **Pelataran Transit** | outdoor | Dekat area transit & drop off | 6 (D01–D06) |
 
-Nama & jumlah zona final: *TBD* (tergantung layout lokasi Gondangdia).
+Total: **5 zona, 24 lapak, 24 tenant (1 lapak = 1 tenant).**
+
+---
+
+## 7.5 Status Implementasi
+
+| Komponen | Status |
+|---|---|
+| 8 halaman publik (Home, Tentang, Tenant, Detail Tenant, Peta, Jadwal, Kunjungan, Gabung, Partner) | ✅ Selesai |
+| Bilingual ID/EN (toggle, tersimpan di browser) | ✅ Selesai |
+| Peta lapak interaktif (SVG, klik → popup tenant) + tabel | ✅ Selesai |
+| Admin Dashboard (tenant, menu, zona, lapak, jadwal, pendaftaran, export) | ✅ Selesai |
+| Database D1 (schema + seed + 9 endpoint API) | ✅ Selesai |
+| Deploy: Cloudflare Pages via Git (commit → auto live) | ✅ Siap |
+| Gambar flow `Disinting Kel 5.png` | ⏳ Belum diterima |
 
 ---
 

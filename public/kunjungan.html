@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kunjungan — Titik Ngemil</title>
+  <meta name="description" content="Cara ke Titik Ngemil di kawasan Stasiun Gondangdia: jam buka, lokasi, dan transportasi.">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍢</text></svg>">
+</head>
+<body data-page="visit">
+  <header id="site-header"></header>
+
+  <section class="page-hero">
+    <div class="wrap">
+      <span class="eyebrow">📍 Visit</span>
+      <h1 data-i18n="visit_title"></h1>
+      <p class="muted" style="max-width:62ch" data-i18n="visit_sub"></p>
+    </div>
+  </section>
+
+  <section style="padding-top:20px">
+    <div class="wrap">
+      <div class="map-layout">
+        <div class="panel">
+          <h3 data-i18n="detail_event"></h3>
+          <div class="kv" id="visit-info"></div>
+          <a class="btn btn-primary" style="margin-top:18px" href="https://maps.google.com/?q=Stasiun+Gondangdia+Jakarta" target="_blank" rel="noopener">🧭 Buka di Google Maps</a>
+        </div>
+        <div class="panel">
+          <h3 data-i18n="open_hours"></h3>
+          <div class="kv" id="visit-hours"></div>
+          <p class="form-note">Puncak keramaian 16.30–19.30 WIB. Datang lebih awal untuk menghindari antrean.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-alt">
+    <div class="wrap">
+      <div class="section-head"><div><h2 data-i18n="transport"></h2></div></div>
+      <div class="grid grid-4" id="visit-transport"></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="map-shell" style="aspect-ratio:16/7;display:grid;place-items:center;background:
+        repeating-linear-gradient(45deg,#f0e6d8,#f0e6d8 20px,#ece0cf 20px,#ece0cf 40px)">
+        <div class="center">
+          <div style="font-size:3rem">🗺️</div>
+          <h3>Stasiun Gondangdia</h3>
+          <p class="muted mb0">Jl. Srikaya II, Kebon Sirih, Menteng, Jakarta Pusat</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer id="site-footer"></footer>
+  <script src="data/db.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

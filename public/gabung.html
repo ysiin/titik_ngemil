@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daftar Jadi Tenant — Titik Ngemil</title>
+  <meta name="description" content="Daftar jadi tenant Titik Ngemil. Isi formulir, tim kurasi akan menghubungi.">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍢</text></svg>">
+</head>
+<body data-page="join">
+  <header id="site-header"></header>
+
+  <section class="page-hero">
+    <div class="wrap">
+      <span class="eyebrow">🤝 Join as Tenant</span>
+      <h1 data-i18n="join_title"></h1>
+      <p class="muted" style="max-width:62ch" data-i18n="join_sub"></p>
+    </div>
+  </section>
+
+  <section style="padding-top:20px">
+    <div class="wrap" style="display:grid;grid-template-columns:1.4fr .8fr;gap:26px;align-items:start">
+      <div class="panel">
+        <div id="join-alert" class="alert alert-ok hidden"></div>
+        <form id="join-form" class="form-grid">
+          <div>
+            <label>Nama Brand *</label>
+            <input name="brand_name" required placeholder="cth. Sate Ayam Pak Kumis">
+          </div>
+          <div>
+            <label>Kategori *</label>
+            <select name="category" required>
+              <option value="">Pilih kategori</option>
+              <option>Kuliner</option><option>Minuman</option><option>Jajanan</option>
+              <option>Dessert</option><option>Non-Food</option>
+            </select>
+          </div>
+          <div>
+            <label>Nama Penanggung Jawab *</label>
+            <input name="contact_name" required placeholder="Nama lengkap">
+          </div>
+          <div>
+            <label>Nomor WhatsApp *</label>
+            <input name="phone" required placeholder="08xxxxxxxxxx">
+          </div>
+          <div>
+            <label>Email</label>
+            <input name="email" type="email" placeholder="nama@email.com">
+          </div>
+          <div>
+            <label>Instagram / Link Portfolio</label>
+            <input name="portfolio_url" placeholder="@akun atau https://...">
+          </div>
+          <div class="full">
+            <label>Ceritakan dagangan kamu *</label>
+            <textarea name="pitch" required placeholder="Jenis makanan/minuman, menu andalan, sudah berjualan berapa lama, dan kenapa cocok di Titik Ngemil."></textarea>
+          </div>
+          <div class="full">
+            <label>Preferensi Zona (opsional)</label>
+            <select name="preferred_zone">
+              <option value="">Belum ada preferensi</option>
+              <option>Pintu Gondangdia</option><option>Lorong Srikaya</option>
+              <option>Taman Cut Meutia</option><option>Pelataran Transit</option>
+            </select>
+          </div>
+          <div class="full">
+            <button type="submit" class="btn btn-primary btn-block" data-i18n="submit_join"></button>
+          </div>
+        </form>
+      </div>
+      <div class="map-side">
+        <div class="panel">
+          <h3>Kriteria Kurasi</h3>
+          <ul style="padding-left:1.1em;margin:0">
+            <li>Usaha mikro/kecil aktif (PKL, UMKM, atau brand lokal)</li>
+            <li>Menu jelas & higienis</li>
+            <li>Bersedia mengikuti standar tata lapak Titik Ngemil</li>
+            <li>Branding tidak meniru brand lain</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>Biaya Sewa</h3>
+          <p class="muted mb0">Skema <b>sewa lapak ramah UMKM</b>, bukan bagi hasil. Paket menyesuaikan ukuran lapak.</p>
+          <div class="kv" style="margin-top:12px">
+            <div class="kv-row"><span>Lapak kecil</span><b>Rp 150.000 / event</b></div>
+            <div class="kv-row"><span>Lapak sedang</span><b>Rp 250.000 / event</b></div>
+            <div class="kv-row"><span>Lapak besar</span><b>Rp 350.000 / event</b></div>
+          </div>
+          <p class="form-note">*Angka indikatif, final menyesuaikan lokasi & fasilitas.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer id="site-footer"></footer>
+  <script src="data/db.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

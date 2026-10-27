@@ -1,0 +1,19 @@
+{
+  "name": "titik-ngemil",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Titik Ngemil — website pop-up market PKL terkurasi (Cloudflare Pages + D1)",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler pages dev public --d1=DB",
+    "gen:seed": "node scripts/gen-seed.mjs",
+    "db:init": "wrangler d1 execute titik-ngemil-db --remote --file=./schema.sql",
+    "db:seed": "wrangler d1 execute titik-ngemil-db --remote --file=./seed.sql",
+    "db:init:local": "wrangler d1 execute titik-ngemil-db --local --file=./schema.sql",
+    "db:seed:local": "wrangler d1 execute titik-ngemil-db --local --file=./seed.sql",
+    "deploy": "wrangler pages deploy public"
+  },
+  "devDependencies": {
+    "wrangler": "^3.90.0"
+  }
+}

@@ -1,0 +1,29 @@
+name = "titik-ngemil"
+compatibility_date = "2025-01-01"
+pages_build_output_dir = "public"
+
+# =====================================================================
+#  Konfigurasi Cloudflare Pages + D1
+# =====================================================================
+#  PENTING: binding D1 & variabel di bawah SENGAJA dikomentari supaya
+#  deploy pertama TIDAK gagal. Cara mengaktifkannya ada 2 opsi:
+#
+#  OPSI A (paling gampang, untuk Pages yang tersambung ke GitHub) —
+#    atur lewat dashboard Cloudflare:
+#      Pages project -> Settings -> Functions -> D1 database bindings
+#        Variable name: DB   -> pilih database: titik-ngemil-db
+#      Pages project -> Settings -> Environment variables
+#        ADMIN_TOKEN = <token rahasia kamu>
+#
+#  OPSI B (lewat file ini, untuk `wrangler pages dev` / deploy CLI) —
+#    hapus komentar pada blok di bawah, lalu isi database_id.
+#
+# ---------------------------------------------------------------------
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "titik-ngemil-db"
+# database_id = "GANTI_DENGAN_DATABASE_ID_ANDA"
+#
+# [vars]
+# ADMIN_TOKEN = "ganti-dengan-token-rahasia-anda"
+# ---------------------------------------------------------------------

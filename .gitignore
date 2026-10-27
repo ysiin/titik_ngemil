@@ -1,0 +1,17 @@
+# dependencies / build
+node_modules/
+.wrangler/
+dist/
+*.log
+
+# env & secrets
+.env
+.env.*
+.dev.vars
+
+# editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tenant — Titik Ngemil</title>
+  <meta name="description" content="Jelajahi tenant terkurasi Titik Ngemil: kuliner, minuman, jajanan, dessert, dan non-food.">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍢</text></svg>">
+</head>
+<body data-page="tenants">
+  <header id="site-header"></header>
+
+  <section class="page-hero">
+    <div class="wrap">
+      <span class="eyebrow">🍜 Tenant Directory</span>
+      <h1 data-i18n="nav_tenants"></h1>
+      <p class="muted" style="max-width:62ch">Semua tenant sudah melewati kurasi tim Titik Ngemil — dari kuliner berat sampai jajanan tradisional.</p>
+    </div>
+  </section>
+
+  <section style="padding-top:26px">
+    <div class="wrap">
+      <input type="search" class="search-input w-100" id="search" style="margin-bottom:16px">
+      <div class="filters" id="cat-filters"></div>
+      <div class="filters" id="zone-filters"></div>
+      <p class="result-note" id="result-note"></p>
+      <div class="grid grid-3" id="tenant-grid"></div>
+    </div>
+  </section>
+
+  <footer id="site-footer"></footer>
+  <script src="data/db.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

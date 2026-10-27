@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detail Tenant — Titik Ngemil</title>
+  <meta name="description" content="Detail tenant Titik Ngemil: cerita, menu, harga, dan lokasi lapak.">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍢</text></svg>">
+</head>
+<body data-page="tenant-detail">
+  <header id="site-header"></header>
+
+  <section style="padding-top:40px">
+    <div class="wrap">
+      <div id="tenant-detail"></div>
+    </div>
+  </section>
+
+  <section class="bg-alt" id="other-section" style="display:none">
+    <div class="wrap" id="other-tenants"></div>
+  </section>
+
+  <footer id="site-footer"></footer>
+  <script src="data/db.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      setTimeout(function () {
+        var el = document.getElementById("other-tenants");
+        if (el && el.innerHTML.trim() !== "") document.getElementById("other-section").style.display = "block";
+      }, 60);
+    });
+  </script>
+</body>
+</html>

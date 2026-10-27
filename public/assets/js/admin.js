@@ -510,7 +510,12 @@
   function genSeedSql() {
     var s = [];
     s.push("-- Titik Ngemil — seed data (generated " + new Date().toISOString() + ")");
-    s.push("DELETE FROM menu_items; DELETE FROM tenants; DELETE FROM stalls; DELETE FROM zones; DELETE FROM categories; DELETE FROM schedule_items; DELETE FROM events;");
+    s.push("-- Jalankan: wrangler d1 execute titik-ngemil-db --remote --file=./seed.sql");
+    s.push("");
+    // urutan penting: anak dulu, induk belakangan (FK)
+    s.push(["tenant_days", "menu_items", "tenants", "stalls", "zones", "sites",
+      "categories", "schedule_items", "applications", "events"]
+      .map(function (tb) { return "DELETE FROM " + tb + ";"; }).join("\n"));
     s.push(sqlEvent(db.event));
     // titik (multi-lokasi) — nama titik bisa diubah admin
     (db.sites || []).forEach(function (st, i) {
@@ -520,7 +525,7 @@
     });
     db.categories.forEach(function (c) { s.push("INSERT INTO categories (id,name_id,name_en,icon,color) VALUES (" + q(c.id) + "," + q(c.name.id) + "," + q(c.name.en) + "," + q(c.icon) + "," + q(c.color) + ");"); });
     db.zones.forEach(function (z) { s.push("INSERT INTO zones (id,event_id,name_id,name_en,type,color,blurb_id,blurb_en,pos_x,pos_y,pos_w,pos_h) VALUES (" + q(z.id) + "," + q(db.event.id) + "," + q(z.name.id) + "," + q(z.name.en) + "," + q(z.type) + "," + q(z.color) + "," + q(z.blurb.id) + "," + q(z.blurb.en) + "," + z.area.x + "," + z.area.y + "," + z.area.w + "," + z.area.h + ");"); });
-    db.stalls.forEach(function (st) { s.push("INSERT INTO stalls (code,no,event_id,site_id,zone_id,label,pos_x,pos_y,pos_w,pos_h,booth_status) VALUES (" + q(st.code) + "," + (st.no || 0) + "," + q(db.event.id) + "," + q(db.activeSite || "gondangdia") + "," + q(st.zoneId) + "," + q(st.label) + "," + st.x + "," + st.y + "," + st.w + "," + st.h + "," + q(st.boothStatus || "buka") + ");"); });
+    db.stalls.forEach(function (st) { s.push("INSERT INTO stalls (code,no,event_id,site_id,zone_id,label,pos_x,pos_y,pos_w,pos_h,status,booth_status) VALUES (" + q(st.code) + "," + (st.no || 0) + "," + q(db.event.id) + "," + q(db.activeSite || "gondangdia") + "," + q(st.zoneId) + "," + q(st.label) + "," + st.x + "," + st.y + "," + st.w + "," + st.h + "," + q(st.status || "occupied") + "," + q(st.boothStatus || "buka") + ");"); });
     db.tenants.forEach(function (t) {
       s.push("INSERT INTO tenants (slug,event_id,brand,category_id,zone_id,stall_code,tagline_id,tagline_en,desc_id,desc_en,story_id,story_en,instagram,whatsapp,halal,tags,site_id,booth_status,verification) VALUES (" +
         [q(t.slug), q(db.event.id), q(t.brand), q(t.categoryId), q(t.zoneId), q(t.stallCode), q(t.tagline.id), q(t.tagline.en), q(t.desc.id), q(t.desc.en), q((t.story || {}).id || ""), q((t.story || {}).en || ""), q(t.instagram || ""), q(t.whatsapp || ""), t.halal ? 1 : 0, q((t.tags || []).join(",")), q(db.activeSite || "gondangdia"), q(t.boothStatus || "buka"), q(t.verification || "disetujui")].join(",") + ");");
@@ -531,6 +536,12 @@
         s.push("INSERT INTO menu_items (tenant_slug,name,price,desc_id,desc_en,is_signature,is_available,sort) VALUES (" +
           [q(t.slug), q(m.name), m.price, q(m.desc.id), q(m.desc.en), m.signature ? 1 : 0, m.available === false ? 0 : 1, i].join(",") + ");");
       });
+    });
+    (db.applications || []).forEach(function (a) {
+      s.push("INSERT INTO applications (app_id,brand_name,category,contact_name,phone,email,pitch,preferred_zone,site_id,booth,stage,note,status,submitted_at) VALUES (" +
+        [q(a.id), q(a.brand_name), q(a.category), q(a.contact_name), q(a.phone), q(a.email), q(a.pitch),
+         q(a.preferred_zone || ""), q(a.site || (db.activeSite || "gondangdia")), a.booth,
+         q(a.stage || "terkirim"), q(a.note || ""), q(a.status || a.stage || "review"), q(a.submitted_at || "")].join(",") + ");");
     });
     db.schedule.forEach(function (it, i) {
       s.push("INSERT INTO schedule_items (event_id,day,start_time,end_time,type,stage,title_id,title_en,desc_id,desc_en,sort) VALUES (" +

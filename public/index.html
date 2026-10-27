@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Titik Ngemil — Pop-up Market PKL Terkurasi di Gondangdia</title>
   <meta name="description" content="Titik Ngemil #1 — pop-up market pedagang kaki lima terkurasi di kawasan Stasiun Gondangdia. Jumat, 30 Oktober 2026.">
-  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="/assets/css/style.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍢</text></svg>">
 </head>
 <body data-page="home">
@@ -20,8 +20,13 @@
         <p class="muted" data-i18n="hero_sub" style="font-size:1.08rem;max-width:56ch"></p>
         <div class="hero-meta" id="hero-meta"></div>
         <div class="hero-cta">
-          <a class="btn btn-primary" href="tenant.html" data-i18n="cta_explore"></a>
-          <a class="btn btn-ghost" href="kunjungan.html" data-i18n="cta_visit"></a>
+          <a class="btn btn-primary" href="/tenant" data-i18n="cta_explore"></a>
+          <a class="btn btn-ghost" href="/kunjungan" data-i18n="cta_visit"></a>
+        </div>
+        <div class="filters" style="margin-top:22px">
+          <span class="chip on">🍢 Titik Gondangdia</span>
+          <span class="chip" style="opacity:.55">3 titik lain (segera)</span>
+          <span class="chip" style="opacity:.55">Minggu libur</span>
         </div>
       </div>
       <div class="hero-card">
@@ -35,43 +40,64 @@
     </div>
   </section>
 
+  <!-- POINTS (titik) -->
+  <section class="bg-alt" id="peta">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <h2 data-i18n="sites_title"></h2>
+          <p data-i18n="sites_sub"></p>
+        </div>
+        <a class="btn btn-ghost" href="/titik" data-i18n="nav_sites"></a>
+      </div>
+      <div class="grid grid-3" id="points-grid"></div>
+      <div style="margin-top:24px">
+        <h3 data-i18n="day_active"></h3>
+        <div id="home-days"></div>
+      </div>
+    </div>
+  </section>
+
   <!-- ZONES -->
-  <section class="bg-alt">
+  <section>
     <div class="wrap">
       <div class="section-head">
         <div>
           <h2 data-i18n="zones_title"></h2>
           <p data-i18n="zones_sub"></p>
         </div>
-        <a class="btn btn-ghost" href="peta.html" data-i18n="nav_map"></a>
+        <a class="btn btn-ghost" href="/titik/gondangdia/denah" data-i18n="nav_map"></a>
       </div>
       <div class="grid grid-3" id="zones-grid"></div>
     </div>
   </section>
 
   <!-- FEATURED -->
-  <section>
+  <section id="tenant" class="bg-alt">
     <div class="wrap">
       <div class="section-head">
         <div>
           <h2 data-i18n="featured"></h2>
           <p data-i18n="featured_sub"></p>
         </div>
-        <a class="btn btn-ghost" href="tenant.html" data-i18n="view_all"></a>
+        <a class="btn btn-ghost" href="/tenant" data-i18n="view_all"></a>
       </div>
       <div class="grid grid-3" id="featured-grid"></div>
+      <div class="filters" style="margin-top:18px">
+        <button class="btn btn-ghost" id="featured-more" data-i18n="tampilkan_lagi"></button>
+      </div>
     </div>
   </section>
 
   <!-- SCHEDULE PREVIEW -->
-  <section class="bg-ink">
+  <section class="bg-ink" id="jadwal">
     <div class="wrap">
       <div class="section-head">
         <div>
           <h2 data-i18n="schedule_title"></h2>
           <p data-i18n="schedule_sub"></p>
         </div>
-        <a class="btn btn-primary" href="jadwal.html" data-i18n="nav_schedule"></a>
+        <a class="btn btn-primary" href="/jadwal" data-i18n="nav_schedule"></a>
       </div>
       <div class="timeline" id="home-schedule"></div>
     </div>
@@ -86,15 +112,15 @@
           <p class="muted mb0" data-i18n="partner_sub"></p>
         </div>
         <div class="flex">
-          <a class="btn btn-primary" href="partner.html" data-i18n="partner_cta"></a>
-          <a class="btn btn-dark" href="gabung.html" data-i18n="join_title"></a>
+          <a class="btn btn-primary" href="/partner" data-i18n="partner_cta"></a>
+          <a class="btn btn-dark" href="/daftar-tenant" data-i18n="join_title"></a>
         </div>
       </div>
     </div>
   </section>
 
   <footer id="site-footer"></footer>
-  <script src="data/db.js"></script>
-  <script src="assets/js/app.js"></script>
+  <script src="/data/db.js"></script>
+  <script src="/assets/js/app.js"></script>
 </body>
 </html>

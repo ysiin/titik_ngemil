@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kontak Pengelola — Titik Ngemil</title>
+  <meta name="description" content="Hubungi tim Titik Ngemil: pendaftaran tenant, kemitraan, atau pertanyaan umum.">
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍢</text></svg>">
+</head>
+<body data-page="kontak">
+  <header id="site-header"></header>
+
+  <section class="page-hero">
+    <div class="wrap">
+      <nav class="flex" style="font-size:.85rem;margin-bottom:10px">
+        <a href="/">Beranda</a> <span class="muted">›</span> <span class="muted">Kontak</span>
+      </nav>
+      <span class="eyebrow">✉️ Kontak</span>
+      <h1>Hubungi Pengelola</h1>
+      <p class="muted" style="max-width:70ch">Ada pertanyaan soal pendaftaran, kemitraan, atau lokasi? Tim Titik Ngemil siap membantu.</p>
+    </div>
+  </section>
+
+  <section style="padding-top:20px">
+    <div class="wrap" style="display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:start">
+      <div class="panel">
+        <h3>Kirim Pesan</h3>
+        <form class="form-grid" id="contact-form">
+          <div>
+            <label>Nama *</label>
+            <input required placeholder="Nama kamu">
+          </div>
+          <div>
+            <label>WhatsApp / Email *</label>
+            <input required placeholder="08xxxxxxxxxx atau nama@email.com">
+          </div>
+          <div class="full">
+            <label>Topik</label>
+            <select>
+              <option>Pendaftaran tenant</option>
+              <option>Kemitraan / sponsor</option>
+              <option>Pengelola kawasan</option>
+              <option>Lainnya</option>
+            </select>
+          </div>
+          <div class="full">
+            <label>Pesan *</label>
+            <textarea required placeholder="Tulis pesan kamu..."></textarea>
+          </div>
+          <div class="full">
+            <button type="submit" class="btn btn-primary">Kirim Pesan</button>
+          </div>
+        </form>
+        <div id="contact-alert" class="alert alert-ok hidden" style="margin-top:14px"></div>
+      </div>
+      <div class="map-side">
+        <div class="panel">
+          <h3>Kontak Langsung</h3>
+          <div class="kv">
+            <div class="kv-row"><span>WhatsApp</span><b>0812-0000-0000</b></div>
+            <div class="kv-row"><span>Email</span><b>halo@titikngemil.id</b></div>
+            <div class="kv-row"><span>Instagram</span><b>@titikngemil</b></div>
+          </div>
+        </div>
+        <div class="panel">
+          <h3>Titik Aktif</h3>
+          <p class="muted mb0">Titik Gondangdia — kawasan Stasiun Gondangdia, Jakarta Pusat. Buka Senin–Sabtu, 14.00–22.00 WIB.</p>
+          <a class="btn btn-ghost" style="margin-top:12px" href="/titik/gondangdia">Lihat Titik Gondangdia →</a>
+        </div>
+        <div class="panel">
+          <h3>Jadi Tenant?</h3>
+          <p class="muted mb0">Langsung isi formulir pendaftaran — tim kurasi akan meninjau.</p>
+          <a class="btn btn-primary" style="margin-top:12px" href="/daftar-tenant">Daftar Tenant →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer id="site-footer"></footer>
+  <script src="/data/db.js"></script>
+  <script src="/assets/js/app.js"></script>
+  <script>
+    document.getElementById("contact-form").addEventListener("submit", function (e) {
+      e.preventDefault();
+      var box = document.getElementById("contact-alert");
+      box.textContent = "Terima kasih! Pesan kamu sudah kami terima dan akan dibalas tim Titik Ngemil.";
+      box.classList.remove("hidden");
+      TN.toast("Pesan terkirim.");
+      this.reset();
+    });
+  </script>
+</body>
+</html>

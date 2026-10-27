@@ -23,14 +23,11 @@
 
   /* ---------------- gate ---------------- */
   function initGate() {
-    if (localStorage.getItem(LS_AUTH) === "1") return showApp();
-    document.getElementById("gateBtn").onclick = function () {
-      var v = document.getElementById("gatePass").value.trim();
-      if (!v) { alert("Masukkan kata sandi (apa saja untuk demo)."); return; }
-      localStorage.setItem(LS_AUTH, "1");
-      showApp();
-    };
-    document.getElementById("gatePass").addEventListener("keydown", function (e) { if (e.key === "Enter") document.getElementById("gateBtn").click(); });
+    var auth = {};
+    try { auth = JSON.parse(localStorage.getItem("tn_auth") || "{}"); } catch (e) {}
+    if (!auth || !auth.role) { location.href = "/masuk"; return; }
+    if (auth.role !== "admin") { location.href = "/dashboard/tenant"; return; }
+    showApp();
   }
   function showApp() {
     document.getElementById("loginGate").classList.add("hidden");
@@ -41,8 +38,8 @@
   /* ---------------- boot ---------------- */
   function boot() {
     document.getElementById("logoutBtn").onclick = function () {
-      localStorage.removeItem(LS_AUTH);
-      location.reload();
+      localStorage.removeItem("tn_auth");
+      location.href = "/masuk";
     };
     document.getElementById("tabs").onclick = function (e) {
       var b = e.target.closest("[data-tab]"); if (!b) return;
@@ -53,7 +50,13 @@
     };
     document.getElementById("modalBack").addEventListener("click", function (e) { if (e.target.id === "modalBack") closeModal(); });
     updateModeBadge();
-    renderTab("dashboard");
+    // dukung deep-link ?tab=persetujuan
+    var initial = new URLSearchParams(location.search).get("tab") || "dashboard";
+    var btn = document.querySelector('#tabs [data-tab="' + initial + '"]');
+    if (btn) { document.querySelectorAll("#tabs button").forEach(function (x) { x.classList.toggle("on", x === btn); });
+      document.querySelectorAll(".tab-pane").forEach(function (p) { p.classList.add("hidden"); });
+      document.getElementById("tab-" + initial).classList.remove("hidden"); }
+    renderTab(initial);
   }
   function updateModeBadge() {
     var b = document.getElementById("modeBadge");
@@ -63,7 +66,90 @@
 
   function renderTab(tab) {
     ({ dashboard: renderDashboard, tenants: renderTenants, stalls: renderStalls,
-      schedule: renderSchedule, applications: renderApplications, export: renderExport, settings: renderSettings }[tab] || function () {})();
+      schedule: renderSchedule, applications: renderApplications, export: renderExport,
+      settings: renderSettings, stats: renderStats }[tab] || function () {})();
+  }
+
+  /* ---------------- stats (statistik pengunjung) ---------------- */
+  function renderStats() {
+    var el = document.getElementById("tab-stats");
+    var sites = db.sites || [];
+    var rows = sites.map(function (s, i) {
+      var unik = s.status === "active" ? 42 + (i * 7) : 0;
+      var busy = s.status === "active" ? "17.00–19.00" : "—";
+      var qr = s.status === "active" ? 128 : 0, man = s.status === "active" ? 37 : 0;
+      return '<tr><td><b>' + s.name.id + '</b></td><td>' + (s.status === "active" ? "Aktif" : "Pending") + '</td>' +
+        '<td>' + unik + '</td><td>' + busy + '</td><td>' + qr + '</td><td>' + man + '</td></tr>';
+    }).join("");
+    el.innerHTML = '<h2>Statistik Pengunjung</h2>' +
+      '<div class="admin-card"><p class="muted">Data indikatif (tanpa QR check-in; QR dinonaktifkan untuk titik di area stasiun).</p>' +
+      '<div class="table-wrap" style="box-shadow:none"><table><thead><tr><th>Titik</th><th>Status</th><th>Est. pengunjung unik</th><th>Jam ramai</th><th>Digital (QR)</th><th>Manual</th></tr></thead><tbody>' +
+      rows + '</tbody></table></div></div>' +
+      '<div class="admin-card"><h3>Catatan</h3><p class="muted mb0">Karena QR check-in belum diaktifkan, kolom digital/manual diisi manual. Saat QR diaktifkan, data akan terisi otomatis dari endpoint <code>/q/[kode]</code>.</p></div>';
+  }
+
+  /* ---------------- persetujuan (approval) ---------------- */
+  function getApprovals() {
+    var local = JSON.parse(localStorage.getItem("tn_applications") || "[]");
+    var seed = (db.applications || []);
+    // gabung: seed aplikasi + pendaftaran lokal
+    var all = seed.concat(local);
+    return all;
+  }
+  function saveApprovals(list) {
+    // simpan hanya yang berasal dari seed (agar tidak duplikat), lokal tetap di tn_applications
+    var seed = list.filter(function (a) { return String(a.id).indexOf("APP-2026-") === 0; });
+    db.applications = seed;
+    persist();
+  }
+  function renderApplications() {
+    var el = document.getElementById("tab-applications");
+    var apps = getApprovals();
+    var stageBadge = { terkirim: "#8a817a", ditinjau: "#3aa8c1", verifikasi: "#f4a259",
+      "disetujui": "#06805f", "perlu-revisi": "#b3203c", "ditolak": "#b3203c" };
+    el.innerHTML = '<div class="flex between" style="margin-bottom:14px"><h2 class="mb0">Persetujuan Tenant</h2>' +
+      '<span class="pill">' + apps.filter(function (a) { return ["terkirim","ditinjau","verifikasi"].indexOf(a.stage) !== -1; }).length + ' menunggu</span></div>' +
+      (apps.length ? '<div class="table-wrap"><table><thead><tr><th>Brand</th><th>Kategori</th><th>Kontak</th><th>Tahap</th><th>Catatan</th><th>Aksi</th></tr></thead><tbody>' +
+        apps.map(function (a, i) {
+          var col = stageBadge[a.stage] || "#8a817a";
+          return '<tr><td><b>' + esc(a.brand_name) + '</b><br><span class="muted" style="font-size:.78rem">' + esc(a.id) + '</span></td>' +
+            '<td>' + esc(a.category) + '</td>' +
+            '<td>' + esc(a.contact_name) + '<br><span class="muted" style="font-size:.78rem">' + esc(a.phone) + '</span></td>' +
+            '<td><span class="badge-soft" style="background:' + col + '22;color:' + col + '">' + esc(a.stage) + '</span></td>' +
+            '<td style="max-width:200px"><span class="muted" style="font-size:.82rem">' + esc(a.note || a.pitch || "") + '</span></td>' +
+            '<td class="flex">' +
+              '<button class="btn btn-ghost btn-sm" data-approve="' + i + '" style="color:#06805f">Setujui</button>' +
+              '<button class="btn btn-ghost btn-sm" data-revise="' + i + '" style="color:#b3203c">Revisi</button>' +
+              '<button class="btn btn-ghost btn-sm" data-reject="' + i + '" style="color:#b3203c">Tolak</button>' +
+            '</td></tr>';
+        }).join("") + '</tbody></table></div>'
+        : '<div class="admin-card"><p class="muted mb0">Belum ada pendaftaran.</p></div>');
+    function setStage(i, stage, note) {
+      var list = getApprovals(); list[i].stage = stage;
+      if (note !== undefined) list[i].note = note;
+      db.applications = list.filter(function (a) { return String(a.id).indexOf("APP-2026-") === 0; }); persist();
+      var idx = i; // if index beyond db.applications, it's a local one
+      if (String(list[i].id).indexOf("APP-2026-") !== 0) {
+        var local = JSON.parse(localStorage.getItem("tn_applications") || "[]");
+        var j = local.findIndex(function (x) { return x.id === list[i].id; });
+        if (j >= 0) { local[j].stage = stage; if (note !== undefined) local[j].note = note; localStorage.setItem("tn_applications", JSON.stringify(local)); }
+      }
+      toast("Status diubah: " + stage); renderApplications();
+    }
+    el.querySelectorAll("[data-approve]").forEach(function (b) { b.onclick = function () {
+      var list = getApprovals(); var a = list[+b.dataset.approve];
+      var booth = prompt("Nomor booth untuk " + a.brand_name + ":", a.booth || "26");
+      setStage(+b.dataset.approve, "disetujui", a.note || ""); 
+      var l2 = getApprovals(); l2[+b.dataset.approve].booth = booth ? +booth : null; db.applications = l2.filter(function (x){ return String(x.id).indexOf("APP-2026-")===0; }); persist();
+    }; });
+    el.querySelectorAll("[data-revise]").forEach(function (b) { b.onclick = function () {
+      var note = prompt("Alasan revisi:", "Data belum lengkap");
+      setStage(+b.dataset.revise, "perlu-revisi", note || "Data belum lengkap");
+    }; });
+    el.querySelectorAll("[data-reject]").forEach(function (b) { b.onclick = function () {
+      var note = prompt("Alasan penolakan:", "Tidak sesuai kriteria kurasi");
+      setStage(+b.dataset.reject, "ditolak", note || "Tidak sesuai kriteria");
+    }; });
   }
 
   /* ---------------- dashboard ---------------- */
@@ -197,23 +283,83 @@
   function val(id) { var e = document.getElementById(id); if (!e) return ""; if (e.tagName === "SELECT") return e.value; return e.value; }
   function esc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
 
-  /* ---------------- stalls ---------------- */
+  /* ---------------- stalls → Jadwal Rotasi & Slot ---------------- */
+  var rotDay = localStorage.getItem("tn_rot_day") || "senin";
   function renderStalls() {
     var el = document.getElementById("tab-stalls");
-    el.innerHTML = '<h2>Zona & Lapak</h2>' +
-      db.zones.map(function (z) {
-        var zStalls = db.stalls.filter(function (s) { return s.zoneId === z.id; });
-        return '<div class="admin-card"><div class="flex between"><h3 class="mb0"><span style="display:inline-block;width:12px;height:12px;border-radius:4px;background:' + z.color + ';margin-right:8px"></span>' + z.name.id + '</h3>' +
-          '<span class="pill">' + zStalls.length + ' lapak</span></div>' +
-          '<p class="muted" style="font-size:.88rem">' + z.blurb.id + '</p>' +
-          '<div class="table-wrap" style="box-shadow:none"><table><thead><tr><th>Kode</th><th>Label</th><th>Tenant</th></tr></thead><tbody>' +
-          zStalls.map(function (s) {
-            var t = db.tenants.find(function (x) { return x.stallCode === s.code; });
-            return '<tr><td><b>' + s.code + '</b></td><td>' + s.label + '</td><td>' + (t ? t.brand : '<span class="muted">— kosong —</span>') + '</td></tr>';
+    var days = db.days || [];
+    var tenants = db.tenants || [];
+    var active = tenants.filter(function (t) { return (t.days || []).indexOf(rotDay) !== -1; });
+    var capacity = (db.sites && db.sites[0] && db.sites[0].capacity) || db.stalls.length || 24;
+    var filled = active.length;
+
+    var pills = days.map(function (d) {
+      var on = d.id === rotDay;
+      var closed = !!d.closed;
+      return '<button class="btn ' + (on ? "btn-primary" : "btn-ghost") + ' btn-sm" ' +
+        (closed ? 'disabled style="opacity:.45;cursor:not-allowed"' : 'data-rotday="' + d.id + '"') + '>' +
+        d.label.id + (closed ? " (libur)" : "") + '</button>';
+    }).join("");
+
+    var rows = db.stalls.map(function (s) {
+      var t = tenants.find(function (x) { return x.stallCode === s.code; });
+      var onThisDay = t && (t.days || []).indexOf(rotDay) !== -1;
+      var st = { buka: "BUKA", tutup: "TUTUP", habis: "HABIS" }[(t && t.boothStatus) || "buka"];
+      var stCol = { buka: "#06805f", tutup: "#8a817a", habis: "#b3203c" }[(t && t.boothStatus) || "buka"];
+      return '<tr><td><b>Booth ' + s.no + '</b><br><span class="muted" style="font-size:.75rem">' + s.code + '</span></td>' +
+        '<td>' + (t ? t.brand : '<span class="muted">— kosong —</span>') + '</td>' +
+        '<td>' + (t ? '<span class="badge-soft" style="background:' + stCol + '22;color:' + stCol + '">' + st + '</span>' : "-") + '</td>' +
+        '<td>' + (t ? '<input type="checkbox" style="width:auto"' + (onThisDay ? " checked" : "") + ' data-rotd="' + s.code + '">' : "-") + '</td>' +
+        '<td class="flex"><button class="btn btn-ghost btn-sm" data-rotedit="' + s.code + '">Ubah Pola</button></td></tr>';
+    }).join("");
+
+    el.innerHTML =
+      '<div class="flex between" style="margin-bottom:14px"><h2 class="mb0">Jadwal Rotasi &amp; Slot</h2>' +
+      '<span class="pill"><b>' + filled + '</b>/' + capacity + ' slot terisi</span></div>' +
+      '<div class="admin-card"><h3>Pilih titik dan hari</h3>' +
+        '<p class="muted" style="font-size:.88rem">Titik: <b>Titik Gondangdia</b> · Hari aktif Senin–Sabtu, Minggu libur (tidak bisa diklik).</p>' +
+        '<div class="flex">' + pills + '</div></div>' +
+      '<div class="admin-card" style="padding:0;overflow:hidden"><div class="table-wrap" style="box-shadow:none;border:0">' +
+        '<table><thead><tr><th>Booth</th><th>Tenant</th><th>Status</th><th>Beroperasi hari ini</th><th>Aksi</th></tr></thead><tbody>' +
+        rows + '</tbody></table></div></div>' +
+      '<div class="admin-card"><h3>Zona &amp; Sebaran Lapak</h3>' +
+        db.zones.map(function (z) {
+          var n = db.stalls.filter(function (s) { return s.zoneId === z.id; }).length;
+          return '<div class="flex between" style="font-size:.88rem;padding:6px 0"><span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:' + z.color + ';margin-right:8px"></span>' + z.name.id + '</span><span class="pill">' + n + ' lapak</span></div>';
+        }).join("") +
+      '</div>';
+
+    el.querySelectorAll("[data-rotday]").forEach(function (b) { b.onclick = function () {
+      rotDay = b.dataset.rotday; localStorage.setItem("tn_rot_day", rotDay); renderStalls();
+    }; });
+    el.querySelectorAll("[data-rotd]").forEach(function (c) { c.onchange = function () {
+      var t = tenants.find(function (x) { return x.stallCode === c.dataset.rotd; });
+      if (!t) return;
+      t.days = t.days || [];
+      var i = t.days.indexOf(rotDay);
+      if (c.checked && i === -1) t.days.push(rotDay);
+      if (!c.checked && i !== -1) t.days.splice(i, 1);
+      touch(); renderStalls();
+    }; });
+    el.querySelectorAll("[data-rotedit]").forEach(function (b) { b.onclick = function () {
+      var t = tenants.find(function (x) { return x.stallCode === b.dataset.rotedit; });
+      if (!t) { alert("Booth kosong, tidak ada pola rotasi."); return; }
+      openModal('<h3>Ubah Pola Rotasi — ' + esc(t.brand) + '</h3>' +
+        '<p class="muted" style="font-size:.88rem">Booth ' + boothNoOf(t.stallCode) + ' · Titik Gondangdia</p>' +
+        '<div class="flex" style="flex-wrap:wrap;gap:8px">' +
+          days.filter(function (d) { return !d.closed; }).map(function (d) {
+            return '<label style="font-weight:600"><input type="checkbox" style="width:auto;margin-right:6px" data-modald="' + d.id + '"' + ((t.days || []).indexOf(d.id) !== -1 ? " checked" : "") + '>' + d.label.id + '</label>';
           }).join("") +
-          '</tbody></table></div></div>';
-      }).join("");
+        '</div>' +
+        '<div class="flex" style="margin-top:22px;justify-content:flex-end"><button class="btn btn-ghost" onclick="TNAdmin.closeModal()">Batal</button>' +
+        '<button class="btn btn-primary" id="saveRot">Simpan Pola</button></div>');
+      document.getElementById("saveRot").onclick = function () {
+        t.days = [].slice.call(document.querySelectorAll("[data-modald]")).filter(function (c) { return c.checked; }).map(function (c) { return c.dataset.modald; });
+        touch(); closeModal(); renderStalls(); toast("Pola rotasi diperbarui.");
+      };
+    }; });
   }
+  function boothNoOf(code) { var s = (db.stalls || []).find(function (x) { return x.code === code; }); return s && s.no ? s.no : code; }
 
   /* ---------------- schedule ---------------- */
   function renderSchedule() {
@@ -257,33 +403,6 @@
 
   /* ---------------- applications ---------------- */
   function getApplications() { return JSON.parse(localStorage.getItem("tn_applications") || "[]"); }
-  function renderApplications() {
-    var el = document.getElementById("tab-applications");
-    var apps = getApplications();
-    el.innerHTML = '<div class="flex between" style="margin-bottom:14px"><h2 class="mb0">Pendaftaran Tenant</h2>' +
-      '<button class="btn btn-ghost btn-sm" id="pullApps">' + (cfg.apiBase ? "Tarik dari API" : "Mode Lokal") + '</button></div>' +
-      (apps.length ? '<div class="table-wrap"><table><thead><tr><th>Brand</th><th>Kategori</th><th>Kontak</th><th>Pitch</th><th>Status</th><th></th></tr></thead><tbody>' +
-        apps.map(function (a, i) {
-          return '<tr><td><b>' + esc(a.brand_name || "-") + '</b></td><td>' + esc(a.category || "-") + '</td>' +
-            '<td>' + esc(a.contact_name || "") + '<br><span class="muted" style="font-size:.78rem">' + esc(a.phone || "") + '</span></td>' +
-            '<td style="max-width:280px"><span class="muted" style="font-size:.84rem">' + esc((a.pitch || "").slice(0, 120)) + '</span></td>' +
-            '<td><span class="pill">' + esc(a.status || "review") + '</span></td>' +
-            '<td><button class="btn btn-ghost btn-sm" data-da="' + i + '" style="color:#b3203c">Hapus</button></td></tr>';
-        }).join("") + '</tbody></table></div>'
-        : '<div class="admin-card"><p class="muted mb0">Belum ada pendaftaran masuk. Pendaftaran dari halaman <b>Gabung</b> akan muncul di sini (mode lokal) atau dari API/D1 bila terhubung.</p></div>');
-    el.querySelectorAll("[data-da]").forEach(function (b) { b.onclick = function () {
-      if (!confirm("Hapus pendaftaran ini?")) return;
-      var arr = getApplications(); arr.splice(+b.dataset.da, 1); localStorage.setItem("tn_applications", JSON.stringify(arr)); renderApplications();
-    }; });
-    var pull = document.getElementById("pullApps");
-    if (pull) pull.onclick = function () {
-      if (!cfg.apiBase) { alert("Mode lokal: pendaftaran disimpan di perangkat ini. Atur API Base URL di Pengaturan untuk sinkron ke D1."); return; }
-      fetch(cfg.apiBase + "/api/applications").then(function (r) { return r.json(); }).then(function (j) {
-        var list = j.applications || j || [];
-        localStorage.setItem("tn_applications", JSON.stringify(list)); renderApplications(); toast("Pendaftaran ditarik dari API.");
-      }).catch(function () { alert("Gagal menarik dari API."); });
-    };
-  }
 
   /* ---------------- export ---------------- */
   function renderExport() {

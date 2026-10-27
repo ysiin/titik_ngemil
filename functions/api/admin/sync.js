@@ -10,10 +10,12 @@ export async function onRequestPost({ request, env }) {
 
   const e = body.event || {};
   const statements = [
+    db.prepare("DELETE FROM tenant_days"),
     db.prepare("DELETE FROM menu_items"),
     db.prepare("DELETE FROM tenants"),
     db.prepare("DELETE FROM stalls"),
     db.prepare("DELETE FROM zones"),
+    db.prepare("DELETE FROM sites"),
     db.prepare("DELETE FROM categories"),
     db.prepare("DELETE FROM schedule_items"),
     db.prepare("DELETE FROM events"),
@@ -27,6 +29,17 @@ export async function onRequestPost({ request, env }) {
       e.id, e.slug, (e.name || {}).id, (e.name || {}).en, (e.theme || {}).id, (e.theme || {}).en,
       e.date, e.startTime, e.endTime, (e.venueName || {}).id, (e.venueName || {}).en,
       e.address, e.city, e.mapsUrl, e.hashtag, e.status || "published"
+    )
+  );
+
+  const activeSite = body.activeSite || "gondangdia";
+  (body.sites || []).forEach((s, i) =>
+    statements.push(
+      db.prepare(
+        `INSERT INTO sites (id,slug,status,city,name_id,name_en,blurb_id,blurb_en,address,maps_url,capacity,open_time,close_time,launch_date,sort)
+         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
+      ).bind(s.id, s.slug, s.status, s.city, s.name.id, s.name.en, s.blurb.id, s.blurb.en,
+        s.address, s.mapsUrl, s.capacity, s.openTime, s.closeTime, s.launchDate, i)
     )
   );
 
@@ -47,24 +60,30 @@ export async function onRequestPost({ request, env }) {
     );
   });
 
-  (body.stalls || []).forEach((s) =>
+  (body.stalls || []).forEach((s, i) =>
     statements.push(
       db.prepare(
-        "INSERT INTO stalls (code,event_id,zone_id,label,pos_x,pos_y,pos_w,pos_h) VALUES (?,?,?,?,?,?,?,?)"
-      ).bind(s.code, e.id, s.zoneId, s.label, s.x, s.y, s.w, s.h)
+        `INSERT INTO stalls (code,no,event_id,site_id,zone_id,label,pos_x,pos_y,pos_w,pos_h,status,booth_status)
+         VALUES (?,?,?,?,?,?,?,?,?,?, 'occupied', ?)`
+      ).bind(s.code, s.no || i + 1, e.id, activeSite, s.zoneId, s.label, s.x, s.y, s.w, s.h, s.boothStatus || "buka")
     )
   );
 
   (body.tenants || []).forEach((t) => {
     statements.push(
       db.prepare(
-        `INSERT INTO tenants (slug,event_id,brand,category_id,zone_id,stall_code,tagline_id,tagline_en,desc_id,desc_en,story_id,story_en,instagram,whatsapp,halal,tags,status)
-         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,'published')`
+        `INSERT INTO tenants (slug,event_id,brand,category_id,zone_id,stall_code,tagline_id,tagline_en,desc_id,desc_en,story_id,story_en,instagram,whatsapp,halal,tags,site_id,booth_status,verification,status)
+         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,'published')`
       ).bind(
         t.slug, e.id, t.brand, t.categoryId, t.zoneId, t.stallCode,
         (t.tagline || {}).id, (t.tagline || {}).en, (t.desc || {}).id, (t.desc || {}).en,
         (t.story || {}).id || "", (t.story || {}).en || "", t.instagram || "", t.whatsapp || "",
-        t.halal ? 1 : 0, (t.tags || []).join(",")
+        t.halal ? 1 : 0, (t.tags || []).join(","), activeSite, t.boothStatus || "buka", t.verification || "disetujui"
+      )
+    );
+    (t.days || []).forEach((d) =>
+      statements.push(
+        db.prepare("INSERT INTO tenant_days (tenant_slug,day) VALUES (?,?)").bind(t.slug, d)
       )
     );
     (t.menu || []).forEach((m, i) =>

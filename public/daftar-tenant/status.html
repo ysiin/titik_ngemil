@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Status Pendaftaran — Titik Ngemil</title>
+  <meta name="description" content="Status verifikasi pendaftaran tenant Titik Ngemil.">
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍢</text></svg>">
+</head>
+<body data-page="status">
+  <header id="site-header"></header>
+
+  <section class="page-hero">
+    <div class="wrap">
+      <nav class="flex" style="font-size:.85rem;margin-bottom:10px">
+        <a href="/">Beranda</a> <span class="muted">›</span>
+        <a href="/daftar-tenant">Daftar Tenant</a> <span class="muted">›</span>
+        <span class="muted">Status</span>
+      </nav>
+      <span class="eyebrow">📋 Status Pendaftaran</span>
+      <h1 id="status-title">Status Verifikasi</h1>
+    </div>
+  </section>
+
+  <section style="padding-top:20px">
+    <div class="wrap">
+      <div id="status-wrap"></div>
+    </div>
+  </section>
+
+  <footer id="site-footer"></footer>
+  <script src="/data/db.js"></script>
+  <script src="/assets/js/app.js"></script>
+  <script>
+    (function () {
+      var STAGES = ["terkirim", "ditinjau", "verifikasi"];
+      var LABEL = { terkirim: "Terkirim", ditinjau: "Ditinjau pengelola", verifikasi: "Verifikasi lapangan",
+        "disetujui": "Disetujui", "perlu-revisi": "Perlu Revisi", "ditolak": "Ditolak" };
+      var id = TN.qs("id");
+      var app = null;
+      try {
+        var local = JSON.parse(localStorage.getItem("tn_applications") || "[]");
+        app = local.find(function (a) { return a.id === id; });
+      } catch (e) {}
+      if (!app) app = (TN.DB.applications || []).find(function (a) { return a.id === id; });
+
+      var wrap = document.getElementById("status-wrap");
+      if (!app) {
+        wrap.innerHTML = '<div class="panel center"><div style="font-size:2.4rem">🔍</div><h3>Pendaftaran tidak ditemukan</h3>' +
+          '<p class="muted">ID <code>' + (id || "-") + '</code> tidak terdaftar.</p>' +
+          '<a class="btn btn-primary" href="/daftar-tenant">Daftar Tenant</a></div>';
+        return;
+      }
+      document.getElementById("status-title").textContent = app.brand_name || "Pendaftaran";
+      var stage = app.stage || "terkirim";
+      var decision = ["disetujui", "perlu-revisi", "ditolak"].indexOf(stage) !== -1;
+      var stageIdx = STAGES.indexOf(stage);
+
+      var stepper = STAGES.map(function (s, i) {
+        var done = decision || i <= stageIdx;
+        return '<div style="display:flex;gap:.7em;align-items:center;margin-bottom:12px">' +
+          '<span style="width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:.8rem;' +
+          (done ? 'background:var(--accent);color:#fff' : 'background:#eee;color:#999') + '">' + (i + 1) + '</span>' +
+          '<b style="' + (done ? '' : 'color:#999') + '">' + LABEL[s] + '</b></div>';
+      }).join("");
+
+      var badge = '<span class="badge-soft" style="background:var(--brand-soft);color:var(--brand-dark);font-size:.95rem">' + (LABEL[stage] || stage) + '</span>';
+      var action = "";
+      if (stage === "disetujui") {
+        action = '<div class="alert alert-ok">🎉 Selamat! Pendaftaran disetujui.' + (app.booth ? ' Nomor booth: <b>' + app.booth + '</b>' : '') +
+          '<br>Titik: <b>' + (app.site || "gondangdia") + '</b> · Hari: menyesuaikan pola rotasi.</div>' +
+          '<a class="btn btn-primary" href="/dashboard/tenant">Buka Dashboard Tenant</a>';
+      } else if (stage === "perlu-revisi") {
+        action = '<div class="alert alert-err">Perlu revisi: ' + (app.note || "ada data yang belum lengkap") + '</div>' +
+          '<a class="btn btn-primary" href="/daftar-tenant">Perbaiki Data</a>';
+      } else if (stage === "ditolak") {
+        action = '<div class="alert alert-err">Pendaftaran ditolak. ' + (app.note || "") + '</div>' +
+          '<a class="btn btn-ghost" href="/kontak">Hubungi Pengelola</a>';
+      } else {
+        action = '<p class="muted mb0">Pendaftaran sedang diproses. Pantau halaman ini secara berkala.</p>';
+      }
+
+      wrap.innerHTML =
+        '<div class="map-layout">' +
+          '<div class="panel"><h3>' + (app.brand_name || "-") + ' ' + badge + '</h3>' +
+            '<div class="kv">' +
+              '<div class="kv-row"><span>ID</span><b>' + app.id + '</b></div>' +
+              '<div class="kv-row"><span>Kategori</span><b>' + (app.category || "-") + '</b></div>' +
+              '<div class="kv-row"><span>Kontak</span><b>' + (app.contact_name || "-") + '</b></div>' +
+              '<div class="kv-row"><span>Diajukan</span><b>' + (app.submitted_at || app.submittedAt || "-") + '</b></div>' +
+            '</div>' +
+            '<div style="margin-top:18px">' + action + '</div>' +
+          '</div>' +
+          '<div class="panel"><h3>Tahapan</h3>' + stepper + '</div>' +
+        '</div>';
+    })();
+  </script>
+</body>
+</html>

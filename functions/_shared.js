@@ -82,6 +82,10 @@ export function mapTenant(t, menus) {
     whatsapp: t.whatsapp,
     halal: !!t.halal,
     tags: t.tags ? String(t.tags).split(",").filter(Boolean) : [],
+    siteId: t.site_id,
+    boothStatus: t.booth_status || "buka",
+    verification: t.verification || "disetujui",
+    days: t.days ? String(t.days).split(",").filter(Boolean) : [],
     menu: (menus || []).map(mapMenu),
   };
 }
@@ -111,10 +115,30 @@ export function mapZone(z) {
 export function mapStall(s) {
   return {
     code: s.code,
+    no: s.no,
     zoneId: s.zone_id,
+    siteId: s.site_id,
     label: s.label,
     x: s.pos_x, y: s.pos_y, w: s.pos_w, h: s.pos_h,
     status: s.status,
+    boothStatus: s.booth_status || "buka",
+  };
+}
+
+export function mapSite(s) {
+  return {
+    id: s.id,
+    slug: s.slug,
+    status: s.status,
+    city: s.city,
+    name: { id: s.name_id, en: s.name_en },
+    blurb: { id: s.blurb_id, en: s.blurb_en },
+    address: s.address,
+    mapsUrl: s.maps_url,
+    capacity: s.capacity,
+    openTime: s.open_time,
+    closeTime: s.close_time,
+    launchDate: s.launch_date,
   };
 }
 

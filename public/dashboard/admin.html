@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Admin — Titik Ngemil</title>
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍢</text></svg>">
+</head>
+<body class="admin-body" data-page="admin">
+
+<div id="loginGate" class="hidden"></div>
+
+<div id="adminApp" class="hidden">
+  <div class="admin-bar">
+    <div class="wrap">
+      <span style="font-weight:800">🍢 Titik Ngemil <span style="opacity:.6;font-weight:600">Admin</span></span>
+      <div class="admin-tabs" id="tabs">
+        <button data-tab="dashboard" class="on">Ringkasan</button>
+        <button data-tab="applications">Persetujuan</button>
+        <button data-tab="stalls">Jadwal Rotasi &amp; Slot</button>
+        <button data-tab="tenants">Tenant</button>
+        <button data-tab="schedule">Acara</button>
+        <button data-tab="stats">Statistik</button>
+        <button data-tab="export">Export / Deploy</button>
+        <button data-tab="settings">Pengaturan</button>
+      </div>
+      <div class="flex" style="margin-left:auto">
+        <span id="modeBadge" class="badge-soft" style="background:#322d28;color:#ffd166">Mode Lokal</span>
+        <a class="btn btn-ghost btn-sm" href="/" target="_blank" rel="noopener">Lihat Situs ↗</a>
+        <button class="btn btn-ghost btn-sm" id="logoutBtn" style="color:#fff;border-color:#4a423b">Keluar</button>
+      </div>
+    </div>
+  </div>
+
+  <main class="admin-main">
+    <div class="wrap">
+      <div id="tab-dashboard" class="tab-pane"></div>
+      <div id="tab-applications" class="tab-pane hidden"></div>
+      <div id="tab-stalls" class="tab-pane hidden"></div>
+      <div id="tab-tenants" class="tab-pane hidden"></div>
+      <div id="tab-schedule" class="tab-pane hidden"></div>
+      <div id="tab-stats" class="tab-pane hidden"></div>
+      <div id="tab-export" class="tab-pane hidden"></div>
+      <div id="tab-settings" class="tab-pane hidden"></div>
+    </div>
+  </main>
+</div>
+
+<div class="modal-back" id="modalBack"><div class="modal" id="modalBody"></div></div>
+<div class="toast" id="toast"></div>
+
+<script src="/data/db.js"></script>
+<script src="/assets/js/admin.js"></script>
+</body>
+</html>

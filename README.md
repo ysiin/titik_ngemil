@@ -1,12 +1,37 @@
 # 🍢 Titik Ngemil
 
-**Pop-up market pedagang kaki lima (PKL) terkurasi** — dimulai di kawasan **Stasiun Gondangdia, Jakarta Pusat**.
+**Pasar harian PKL terkurasi** — titik perdana di kawasan **Stasiun Gondangdia, Jakarta Pusat**.
+Bukan event sekali jalan: Titik Ngemil beroperasi **harian** (Senin–Sabtu) dengan pola rotasi tenant, dan **30 Oktober 2026** adalah hari peluncuran.
 
-> Website publik + Admin Dashboard + Database (Cloudflare D1), siap deploy ke **Cloudflare Pages** lewat Git (commit → otomatis live).
+> Website publik + 2 Dashboard (Tenant & Admin) + Database (Cloudflare D1), siap deploy ke **Cloudflare Pages** lewat Git (commit → otomatis live).
 
-- **Event perdana:** Jumat, **30 Oktober 2026**, 14.00–22.00 WIB
+- **Peluncuran:** Jumat, **30 Oktober 2026**, 14.00–22.00 WIB
+- **Jam operasional:** Senin–Sabtu, 14.00–22.00 WIB · **Minggu libur**
+- **Titik:** 1 aktif (Gondangdia) + 3 dalam rencana
 - **Referensi gaya:** Brightspot Market (tenant terkurasi, zona bernama, gratis masuk)
 - **Stack:** Static HTML/CSS/JS + Cloudflare Pages Functions + Cloudflare D1
+
+---
+
+## 🗺️ Peta Halaman (Route)
+
+| Route | Halaman |
+|---|---|
+| `/` | Beranda (`#peta`, `#jadwal`, `#tenant`) |
+| `/titik` | Indeks titik (aktif + rencana) |
+| `/titik/gondangdia` | Hub titik aktif |
+| `/titik/gondangdia/denah` | Denah booth interaktif (`?booth=04`) |
+| `/menu` · `/menu?slug=` | Indeks menu · menu lengkap tenant |
+| `/tenant` · `/tenant-detail?slug=` | Direktori tenant · detail tenant |
+| `/daftar-tenant` | Form pendaftaran tenant (+ Simpan Draf) |
+| `/daftar-tenant/status?id=` | Status verifikasi pendaftar |
+| `/masuk` | Login tenant & admin |
+| `/dashboard/tenant` | Dashboard tenant (toggle booth BUKA/TUTUP/HABIS) |
+| `/dashboard/admin?tab=` | Dashboard admin (ringkasan, persetujuan, rotasi & slot, statistik) |
+| `/jadwal` · `/kunjungan` · `/partner` · `/tentang` | Halaman pendukung |
+| `/syarat` · `/privasi` · `/kontak` · `404` | Halaman statis & error |
+
+> URL bersih (tanpa `.html`) — didukung Cloudflare Pages. File lama `peta.html` & `gabung.html` otomatis dialihkan ke route baru.
 
 ---
 
@@ -14,37 +39,47 @@
 
 ```
 titik_ngemil/
-├─ public/                     # Situs statis (build output directory)
-│  ├─ index.html               # Beranda
-│  ├─ tentang.html             # Tentang / About (misi, cara kurasi, FAQ)
-│  ├─ tenant.html              # Direktori tenant (filter kategori/zona + search)
-│  ├─ tenant-detail.html       # Detail tenant (menu, harga, lapak, peta)
-│  ├─ peta.html                # Peta lapak interaktif + tabel
-│  ├─ jadwal.html              # Jadwal acara
-│  ├─ kunjungan.html           # Kunjungan & transportasi
-│  ├─ gabung.html              # Formulir pendaftaran tenant
-│  ├─ partner.html             # Paket sponsor/partner
-│  ├─ admin/                   # Admin Dashboard (index.html + admin.js)
-│  ├─ assets/css/style.css     # Design system
-│  ├─ assets/js/app.js         # App inti (i18n ID/EN, render, peta SVG)
-│  └─ data/db.js               # ⭐ Dataset kanonik (juga sumber seed D1)
-├─ functions/                  # Cloudflare Pages Functions (API)
+├─ public/                        # Situs statis (build output directory)
+│  ├─ index.html                  # Beranda
+│  ├─ titik.html                  # Indeks titik
+│  ├─ titik/gondangdia.html       # Hub titik aktif
+│  ├─ titik/gondangdia/denah.html # Denah booth (?booth=N)
+│  ├─ menu.html                   # Indeks & detail menu
+│  ├─ tenant.html                 # Direktori tenant
+│  ├─ tenant-detail.html          # Detail tenant
+│  ├─ daftar-tenant.html          # Pendaftaran tenant
+│  ├─ daftar-tenant/status.html   # Status pendaftaran
+│  ├─ masuk.html                  # Login tenant & admin
+│  ├─ dashboard/tenant.html       # Dashboard tenant
+│  ├─ dashboard/admin.html        # Dashboard admin
+│  ├─ tentang.html / jadwal.html / kunjungan.html / partner.html
+│  ├─ syarat.html / privasi.html / kontak.html / 404.html
+│  ├─ peta.html / gabung.html     # Redirect ke route baru
+│  ├─ assets/css/style.css        # Design system
+│  ├─ assets/js/app.js            # App inti (i18n ID/EN, render, denah SVG)
+│  ├─ assets/js/admin.js          # Logika dashboard admin
+│  ├─ assets/js/tenant-dash.js    # Logika dashboard tenant
+│  └─ data/db.js                  # ⭐ Dataset kanonik (juga sumber seed D1)
+├─ functions/                     # Cloudflare Pages Functions (API)
 │  ├─ _shared.js
 │  └─ api/
-│     ├─ _middleware.js        # CORS + error handling
-│     ├─ event.js              # GET /api/event
-│     ├─ tenants.js            # GET /api/tenants[?slug=]
-│     ├─ zones.js              # GET /api/zones[?with=stalls]
-│     ├─ stalls.js             # GET /api/stalls
-│     ├─ schedule.js           # GET /api/schedule
-│     ├─ applications.js       # POST (publik) / GET (admin) /api/applications
+│     ├─ _middleware.js           # CORS + error handling
+│     ├─ event.js                 # GET /api/event
+│     ├─ sites.js                 # GET /api/sites
+│     ├─ tenants.js               # GET /api/tenants[?slug=]
+│     ├─ zones.js                 # GET /api/zones[?with=stalls]
+│     ├─ stalls.js                # GET /api/stalls
+│     ├─ schedule.js              # GET /api/schedule
+│     ├─ applications/index.js    # POST (publik) / GET (admin) /api/applications
+│     ├─ applications/[id].js     # PATCH keputusan admin
 │     └─ admin/
-│        ├─ _middleware.js     # Wajib admin token
-│        └─ sync.js            # POST /api/admin/sync (push dataset ke D1)
-├─ scripts/gen-seed.mjs        # Generate seed.sql dari public/data/db.js
-├─ schema.sql                  # Skema tabel D1
-├─ seed.sql                    # Data seed D1 (hasil generate)
-├─ wrangler.toml               # Konfigurasi Cloudflare
+│        ├─ _middleware.js        # Wajib admin token
+│        └─ sync.js               # POST /api/admin/sync (push dataset ke D1)
+├─ scripts/gen-seed.mjs           # Generate seed.sql dari public/data/db.js
+├─ schema.sql                     # Skema tabel D1
+├─ seed.sql                       # Data seed D1 (hasil generate)
+├─ wrangler.toml                  # Konfigurasi Cloudflare
+├─ docs/PERENCANAAN.md            # Dokumen perencanaan (termasuk flow asli)
 └─ package.json
 ```
 
@@ -58,7 +93,7 @@ titik_ngemil/
 cd titik_ngemil
 git init
 git add .
-git commit -m "feat: Titik Ngemil website + admin + D1"
+git commit -m "feat: Titik Ngemil website + dashboard + D1"
 git branch -M main
 git remote add origin https://github.com/<username>/titik-ngemil.git
 git push -u origin main
@@ -77,7 +112,7 @@ git push -u origin main
 
 ### 3. (Opsional) Aktifkan Database D1
 
-Website publik sudah jalan tanpa database (data dari `data/db.js`). D1 diperlukan untuk **pendaftaran tenant** & **push data dari Admin**.
+Website publik sudah jalan tanpa database (data dari `data/db.js`). D1 diperlukan untuk **pendaftaran tenant**, **status booth**, dan **push data dari Admin**.
 
 ```bash
 # a. Buat database
@@ -106,15 +141,25 @@ npm run dev            # wrangler pages dev public --d1=DB
 ```
 
 > ⚠️ Di Windows, jika PowerShell memblokir `npm`, gunakan `npm.cmd` / `npx.cmd`.
+> Jika `wrangler d1 execute --local` kehabisan memori, gunakan `--remote` atau `npx.cmd --yes wrangler@3`.
 
 ---
 
-## 🛠️ Admin Dashboard
+## 🛠️ Dashboard
 
-Akses: **`/admin/`** (mis. `https://titik-ngemil.pages.dev/admin/`).
+### Dashboard Tenant — `/dashboard/tenant`
+Login dulu di `/masuk` (pilih peran **Tenant**). Berisi: jadwal saya, profil & menu, status verifikasi, dan **toggle status booth BUKA / TUTUP / HABIS** yang tampil real-time di denah.
 
-- **Demo login:** masukkan kata sandi apa saja (mis. `admin`) — data dikelola di browser (localStorage).
-- **Fitur:** kelola tenant & menu, zona & lapak, jadwal acara, inbox pendaftaran, pengaturan, dan **Export/Deploy**.
+### Dashboard Admin — `/dashboard/admin`
+Login dulu di `/masuk` (pilih peran **Admin**). Tab:
+- **Ringkasan** — jumlah tenant, lapak, pendaftaran.
+- **Persetujuan** — keputusan **Setujui / Minta Revisi / Tolak** + catatan verifikasi lapangan.
+- **Jadwal Rotasi & Slot** — pilih titik & hari, counter **`x/24 slot terisi`**, ubah pola rotasi per tenant.
+- **Tenant / Acara** — kelola konten.
+- **Statistik** — estimasi pengunjung unik per titik & hari.
+- **Export / Deploy** — unduh `db.js`/`seed.sql` atau push ke API/D1.
+
+> **Demo login:** sandi apa saja. Sesi & data dashboard disimpan di browser (localStorage) sehingga berfungsi tanpa D1.
 
 ### Alur update konten
 
@@ -130,13 +175,15 @@ Akses: **`/admin/`** (mis. `https://titik-ngemil.pages.dev/admin/`).
 | Method | Endpoint | Auth | Deskripsi |
 |---|---|---|---|
 | GET | `/api/event` | – | Info event |
-| GET | `/api/tenants` | – | Semua tenant + menu |
+| GET | `/api/sites` | – | Titik (multi-titik) + jumlah terisi |
+| GET | `/api/tenants` | – | Semua tenant + menu + hari rotasi |
 | GET | `/api/tenants?slug=...` | – | Satu tenant |
 | GET | `/api/zones?with=stalls` | – | Zona (+ lapak) |
-| GET | `/api/stalls` | – | Lapak + tenant penghuni |
+| GET | `/api/stalls` | – | Lapak + tenant penghuni + status booth |
 | GET | `/api/schedule` | – | Jadwal acara |
 | POST | `/api/applications` | – | Kirim pendaftaran tenant |
 | GET | `/api/applications` | ✅ | Daftar pendaftaran |
+| PATCH | `/api/applications/:id` | ✅ | Keputusan admin (setujui/revisi/tolak) |
 | POST | `/api/admin/sync` | ✅ | Sinkron dataset ke D1 |
 
 Auth admin: header `Authorization: Bearer <ADMIN_TOKEN>`.
@@ -145,9 +192,11 @@ Auth admin: header `Authorization: Bearer <ADMIN_TOKEN>`.
 
 ## 🗄️ Model Data (ringkas)
 
-`events` · `categories` · `zones` · `stalls` · `tenants` · `menu_items` · `schedule_items` · `applications`
+`sites` · `events` · `categories` · `zones` · `stalls` · `tenants` · `tenant_days` · `menu_items` · `schedule_items` · `applications`
 
-- Satu **lapak (stall)** = satu **tenant** (1:1) pada event ini.
+- Satu **lapak (stall)** = satu **tenant** (1:1) pada titik ini; booth bernomor **1–24**.
+- **`tenant_days`** menyimpan pola rotasi (hari beroperasi tiap tenant).
+- Status booth (`buka`/`tutup`/`habis`) tersimpan di `stalls.booth_status` & `tenants.booth_status`.
 - Setiap field konten punya versi **ID** dan **EN** (bilingual).
 - Detail lengkap: `schema.sql`.
 
@@ -155,12 +204,14 @@ Auth admin: header `Authorization: Bearer <ADMIN_TOKEN>`.
 
 ## 📊 Ringkasan Data Saat Ini
 
-- **5** zona tematik, **24** lapak, **24** tenant, **71** menu item, **7** item jadwal.
+- **4** titik (1 aktif + 3 rencana), **5** zona tematik, **24** lapak, **24** tenant, **96** entri rotasi hari, **71** menu item, **7** item jadwal.
 - Kategori: Kuliner, Minuman, Jajanan, Dessert, Non-Food.
 
 ---
 
 ## 📝 Catatan
 
-- Bagian **flow/alur** pada dokumen perencanaan masih menunggu gambar dari owner.
+- **QR check-in sengaja belum diaktifkan** karena titik berada di area stasiun (bukan venue khusus). Kolom statistik digital disiapkan untuk pengaktifan nanti.
+- **Kuota booth: 24 lapak** per titik (disesuaikan dengan tenant yang ada).
 - Konten tenant bersifat contoh (dummy) untuk keperluan perencanaan & demo.
+- Alur/flow lengkap ada di [`docs/PERENCANAAN.md`](docs/PERENCANAAN.md) §6.

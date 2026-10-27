@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Denah Booth — Titik Gondangdia — Titik Ngemil</title>
+  <meta name="description" content="Denah booth interaktif Titik Ngemil Gondangdia. Klik booth untuk melihat tenant, menu, dan status.">
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍢</text></svg>">
+</head>
+<body data-page="map">
+  <header id="site-header"></header>
+
+  <section class="page-hero">
+    <div class="wrap">
+      <nav class="flex" style="font-size:.85rem;margin-bottom:10px">
+        <a href="/">Beranda</a> <span class="muted">›</span>
+        <a href="/titik">Titik</a> <span class="muted">›</span>
+        <a href="/titik/gondangdia">Titik Gondangdia</a> <span class="muted">›</span>
+        <span class="muted">Denah</span>
+      </nav>
+      <span class="eyebrow">🗺️ Denah Booth</span>
+      <h1 data-i18n="map_title"></h1>
+      <p class="muted" style="max-width:62ch" data-i18n="map_sub"></p>
+    </div>
+  </section>
+
+  <section style="padding-top:20px">
+    <div class="wrap">
+      <div class="map-layout">
+        <div class="map-shell"><div id="map-svg"></div></div>
+        <div class="map-side">
+          <div class="panel" id="stall-info">
+            <p class="muted mb0">👆 Klik salah satu booth pada denah untuk melihat tenant-nya.</p>
+          </div>
+          <div class="panel">
+            <h3 data-i18n="zones_title"></h3>
+            <div class="legend" id="map-legend"></div>
+            <div class="legend" style="margin-top:14px;border-top:1px dashed var(--line);padding-top:12px">
+              <div class="legend-item"><span class="legend-dot" style="background:#06805f"></span> <span data-i18n="st_buka"></span></div>
+              <div class="legend-item"><span class="legend-dot" style="background:#8a817a"></span> <span data-i18n="st_tutup"></span></div>
+              <div class="legend-item"><span class="legend-dot" style="background:#b3203c"></span> <span data-i18n="st_habis"></span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-alt">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <h2 data-i18n="stall_table"></h2>
+          <p data-i18n="stall_table_sub"></p>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th data-i18n="th_tenant"></th>
+              <th data-i18n="th_cat"></th>
+              <th data-i18n="th_zone"></th>
+              <th data-i18n="th_stall"></th>
+              <th data-i18n="th_action"></th>
+            </tr>
+          </thead>
+          <tbody id="stall-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <footer id="site-footer"></footer>
+  <script src="/data/db.js"></script>
+  <script src="/assets/js/app.js"></script>
+</body>
+</html>

@@ -428,13 +428,113 @@
       desc: { id: "Penampilan penutup hingga pasar tutup.", en: "Closing performance until the market closes." } }
   ];
 
+  /* ===================== Multi-titik (lokasi) ===================== */
+  var SITES = [
+    {
+      id: "gondangdia", slug: "gondangdia", status: "active", city: "Jakarta Pusat",
+      name: { id: "Titik Gondangdia", en: "Gondangdia Point" },
+      blurb: { id: "Kawasan Stasiun Gondangdia — titik perdana Titik Ngemil.", en: "Gondangdia Station area — Titik Ngemil's debut point." },
+      address: "Jl. Srikaya II, Kebon Sirih, Kec. Menteng, Jakarta Pusat 10340",
+      mapsUrl: "https://maps.google.com/?q=Stasiun+Gondangdia+Jakarta",
+      capacity: 24, days: ["senin", "selasa", "rabu", "kamis", "jumat", "sabtu"],
+      openTime: "14:00", closeTime: "22:00",
+      launchDate: "2026-10-30"
+    },
+    {
+      id: "tanah-abang", slug: "tanah-abang", status: "pending", city: "Jakarta Pusat",
+      name: { id: "Titik Tanah Abang", en: "Tanah Abang Point" },
+      blurb: { id: "Rencana titik ke-2 di kawasan Tanah Abang.", en: "Planned 2nd point in the Tanah Abang area." },
+      address: "Kawasan Tanah Abang, Jakarta Pusat", mapsUrl: "https://maps.google.com/?q=Tanah+Abang+Jakarta",
+      capacity: 24, days: [], openTime: "14:00", closeTime: "22:00", launchDate: null
+    },
+    {
+      id: "juanda", slug: "juanda", status: "pending", city: "Jakarta Pusat",
+      name: { id: "Titik Juanda", en: "Juanda Point" },
+      blurb: { id: "Rencana titik ke-3 di kawasan Juanda.", en: "Planned 3rd point in the Juanda area." },
+      address: "Kawasan Juanda, Jakarta Pusat", mapsUrl: "https://maps.google.com/?q=Juanda+Jakarta",
+      capacity: 24, days: [], openTime: "14:00", closeTime: "22:00", launchDate: null
+    },
+    {
+      id: "cikini", slug: "cikini", status: "pending", city: "Jakarta Pusat",
+      name: { id: "Titik Cikini", en: "Cikini Point" },
+      blurb: { id: "Rencana titik ke-4 di kawasan Cikini.", en: "Planned 4th point in the Cikini area." },
+      address: "Kawasan Cikini, Jakarta Pusat", mapsUrl: "https://maps.google.com/?q=Cikini+Jakarta",
+      capacity: 24, days: [], openTime: "14:00", closeTime: "22:00", launchDate: null
+    }
+  ];
+
+  var DAYS = [
+    { id: "senin", label: { id: "Senin", en: "Monday" } },
+    { id: "selasa", label: { id: "Selasa", en: "Tuesday" } },
+    { id: "rabu", label: { id: "Rabu", en: "Wednesday" } },
+    { id: "kamis", label: { id: "Kamis", en: "Thursday" } },
+    { id: "jumat", label: { id: "Jumat", en: "Friday" } },
+    { id: "sabtu", label: { id: "Sabtu", en: "Saturday" } },
+    { id: "minggu", label: { id: "Minggu", en: "Sunday" }, closed: true }
+  ];
+
+  // Pola rotasi (dipakai untuk "Jadwal Rotasi & Slot")
+  var ROTATION_PATTERNS = {
+    full: ["senin", "selasa", "rabu", "kamis", "jumat", "sabtu"],
+    gasal: ["senin", "rabu", "jumat"],
+    genap: ["selasa", "kamis", "sabtu"]
+  };
+
+  // Nomor booth 1..N mengikuti urutan lapak
+  STALLS.forEach(function (s, i) { s.no = i + 1; s.boothStatus = "buka"; });
+
+  // Rotasi harian per tenant + status booth operasional (buka/tutup/habis)
+  TENANTS.forEach(function (t, i) {
+    var keys = Object.keys(ROTATION_PATTERNS);
+    t.days = ROTATION_PATTERNS[keys[i % keys.length]].slice();
+    t.boothStatus = i % 7 === 0 ? "tutup" : (i % 11 === 0 ? "habis" : "buka");
+    t.verification = "disetujui"; // disetujui | perlu-revisi | ditolak | ditinjau | terkirim
+  });
+
+  // Contoh data pendaftaran (untuk demo alur status)
+  var APPLICATIONS = [
+    {
+      id: "APP-2026-0001", brand_name: "Nasi Uduk Bu Yati", category: "Kuliner",
+      contact_name: "Yati Sumiati", phone: "081311112222", email: "yati@email.com",
+      pitch: "Nasi uduk betawi dengan lauk lengkap, sudah berjualan di Menteng 6 tahun.",
+      preferred_zone: "Lorong Srikaya", stage: "verifikasi", site: "gondangdia", booth: null,
+      note: "", submitted_at: "2026-10-25"
+    },
+    {
+      id: "APP-2026-0002", brand_name: "Es Doger Kampung", category: "Dessert",
+      contact_name: "Rahmat Hidayat", phone: "081333334444", email: "rahmat@email.com",
+      pitch: "Es doger resep keluarga, cocok untuk sore hari.",
+      preferred_zone: "Taman Cut Meutia", stage: "ditinjau", site: "gondangdia", booth: null,
+      note: "", submitted_at: "2026-10-26"
+    },
+    {
+      id: "APP-2026-0003", brand_name: "Ayam Geprek Juara", category: "Kuliner",
+      contact_name: "Dedi Kurniawan", phone: "081355556666", email: "dedi@email.com",
+      pitch: "Ayam geprek sambal bawang level 1-5.",
+      preferred_zone: "Pelataran Transit", stage: "perlu-revisi", site: "gondangdia", booth: null,
+      note: "Foto dapur & sertifikat halal belum dilampirkan.", submitted_at: "2026-10-24"
+    },
+    {
+      id: "APP-2026-0004", brand_name: "Kopi Rakyat Senja", category: "Minuman",
+      contact_name: "Sinta Maharani", phone: "081377778888", email: "sinta@email.com",
+      pitch: "Kopi susu gula aren & manual brew dengan biji lokal.",
+      preferred_zone: "Pintu Gondangdia", stage: "disetujui", site: "gondangdia", booth: 25,
+      note: "", submitted_at: "2026-10-20"
+    }
+  ];
+
   return {
     updatedAt: "2026-10-27",
+    sites: SITES,
+    activeSite: "gondangdia",
+    days: DAYS,
+    rotationPatterns: ROTATION_PATTERNS,
     event: EVENT,
     categories: CATEGORIES,
     zones: ZONES,
     stalls: STALLS,
     tenants: TENANTS,
+    applications: APPLICATIONS,
     schedule: SCHEDULE
   };
 });

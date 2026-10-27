@@ -374,15 +374,30 @@ Total: **5 zona, 24 lapak, 24 tenant (1 lapak = 1 tenant).**
 
 ## 7.5 Status Implementasi
 
+> Status per **27 Okt 2026**. Situs **diperluas** (bukan dibangun ulang) agar selaras dengan flow asli di §6.
+
 | Komponen | Status |
 |---|---|
-| 8 halaman publik (Home, Tentang, Tenant, Detail Tenant, Peta, Jadwal, Kunjungan, Gabung, Partner) | ✅ Selesai |
+| Beranda + section `#peta` / `#tenant` / `#jadwal` + tab titik (1 aktif + 3 pending) + hari aktif | ✅ Selesai |
+| Multi-titik: `/titik` (indeks), `/titik/gondangdia` (hub) | ✅ Selesai |
+| Denah booth interaktif (`/titik/gondangdia/denah?booth=N`) + tabel + status booth | ✅ Selesai |
+| Menu: indeks `/menu` + detail `/menu?slug=` | ✅ Selesai |
+| Pendaftaran tenant `/daftar-tenant` (+ Simpan Draf) → status `/daftar-tenant/status?id=` (Terkirim→Ditinjau→Verifikasi→keputusan) | ✅ Selesai |
+| Login `/masuk` (tenant & admin) + guard dashboard | ✅ Selesai |
+| Dashboard Tenant `/dashboard/tenant` (jadwal, profil & menu, verifikasi, toggle booth BUKA/TUTUP/HABIS) | ✅ Selesai |
+| Dashboard Admin `/dashboard/admin` (ringkasan, persetujuan, jadwal rotasi & slot `x/24`, statistik) | ✅ Selesai |
+| Rotasi harian (hari aktif Senin–Sabtu, Minggu libur) + pola rotasi per tenant | ✅ Selesai |
+| Halaman statis: `/tentang`, `/syarat`, `/privasi`, `/kontak`, `404` | ✅ Selesai |
 | Bilingual ID/EN (toggle, tersimpan di browser) | ✅ Selesai |
-| Peta lapak interaktif (SVG, klik → popup tenant) + tabel | ✅ Selesai |
-| Admin Dashboard (tenant, menu, zona, lapak, jadwal, pendaftaran, export) | ✅ Selesai |
-| Database D1 (schema + seed + 9 endpoint API) | ✅ Selesai |
+| Database D1 (schema + seed + API) — termasuk `sites`, `tenant_days`, `booth_status`, `applications` | ✅ Selesai |
 | Deploy: Cloudflare Pages via Git (commit → auto live) | ✅ Siap |
-| Gambar flow `Disinting Kel 5.png` | ⏳ Belum diterima |
+| **QR check-in** (`/q/kode`) & statistik QR nyata | ⏸️ **Ditunda** — titik di area stasiun, bukan venue khusus |
+| Gambar flow `Disinting Kel 5.png` | ✅ Diterima & diekstrak (lihat §6) |
+
+### Keputusan implementasi (hasil konfirmasi owner)
+- **Scope:** *extend* situs yang sudah ada, bukan full rebuild.
+- **QR check-in:** belum diaktifkan (lokasi stasiun). Kolom statistik digital disiapkan untuk nanti.
+- **Kuota booth:** **24 lapak** per titik.
 
 ---
 

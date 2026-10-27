@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Masuk — Titik Ngemil</title>
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍢</text></svg>">
+</head>
+<body class="admin-body" data-page="login">
+  <div class="wrap">
+    <div class="login-gate">
+      <div class="admin-card">
+        <a class="brand" href="/" style="margin-bottom:16px"><span class="brand-logo">🍢</span><span>Titik Ngemil<small>Masuk</small></span></a>
+        <h3 style="margin-bottom:.3em">Masuk</h3>
+        <p class="muted" style="font-size:.9rem">Pilih peran untuk masuk ke dashboard.</p>
+        <label>Email / ID</label>
+        <input id="loginEmail" placeholder="nama@email.com atau admin" autocomplete="username">
+        <label style="margin-top:10px">Kata Sandi</label>
+        <input id="loginPass" type="password" placeholder="••••••" autocomplete="current-password">
+        <label style="margin-top:10px">Masuk sebagai</label>
+        <select id="loginRole">
+          <option value="tenant">Tenant</option>
+          <option value="admin">Admin / Pengelola</option>
+        </select>
+        <div id="login-alert" class="alert alert-err hidden" style="margin-top:14px"></div>
+        <button class="btn btn-primary btn-block" style="margin-top:14px" id="loginBtn">Masuk</button>
+        <p class="form-note">Demo: sandi apa saja. Data login disimpan di browser ini.</p>
+        <p class="form-note">Belum jadi tenant? <a href="/daftar-tenant" style="color:var(--brand-dark);font-weight:700">Daftar di sini</a>.</p>
+      </div>
+    </div>
+  </div>
+  <script src="/data/db.js"></script>
+  <script>
+    document.getElementById("loginBtn").onclick = function () {
+      var email = document.getElementById("loginEmail").value.trim();
+      var role = document.getElementById("loginRole").value;
+      var alertBox = document.getElementById("login-alert");
+      if (!email) { alertBox.textContent = "Email/ID wajib diisi."; alertBox.classList.remove("hidden"); return; }
+      localStorage.setItem("tn_auth", JSON.stringify({ role: role, email: email, at: Date.now() }));
+      location.href = role === "admin" ? "/dashboard/admin" : "/dashboard/tenant";
+    };
+    document.getElementById("loginPass").addEventListener("keydown", function (e) {
+      if (e.key === "Enter") document.getElementById("loginBtn").click();
+    });
+  </script>
+</body>
+</html>

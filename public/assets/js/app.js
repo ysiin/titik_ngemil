@@ -260,7 +260,7 @@
     var active = map[href] === page ? " active" : "";
     return '<a href="' + href + '" class="' + active.trim() + '" data-i18n="' + key + '"></a>';
   }
-  // Semua tautan internal memakai path absolut (kompatibel dengan clean URL Cloudflare Pages).
+  // Semua tautan internal memakai path absolut (clean URL, didukung static assets Worker).
   function rootHref(h) { return "/" + h; }
 
   /* ---------------- tenant card ---------------- */

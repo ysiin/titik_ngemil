@@ -1,4 +1,4 @@
-/* Titik Ngemil — shared helpers for Cloudflare Pages Functions */
+/* Titik Ngemil — shared helpers for the Cloudflare Worker */
 
 export function json(data, status = 200, extra = {}) {
   return new Response(JSON.stringify(data, null, 2), {
@@ -36,7 +36,7 @@ export function getDB(env) {
 export function requireDB(env) {
   const db = getDB(env);
   if (!db) {
-    const e = new Error("Database D1 belum terhubung. Bind D1 dengan nama variable 'DB' di Cloudflare Pages.");
+    const e = new Error("Database D1 belum terhubung. Bind D1 dengan nama variable 'DB' di project Worker.");
     e.status = 503;
     throw e;
   }

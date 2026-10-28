@@ -197,8 +197,8 @@ Catatan: setiap entitas konten memiliki field `_id` dan `_en` untuk bilingual. `
 Kebutuhan: situs publik cepat + SEO + bilingual + **admin dashboard** + peta interaktif + CRUD data.
 
 **Rekomendasi utama (yang DIIMPLEMENTASIKAN):**
-- **Static HTML/CSS/JS** untuk situs publik — tanpa build step, deploy instan ke Cloudflare Pages, SEO-friendly.
-- **Cloudflare Pages Functions** untuk API (`/functions/api/*`).
+- **Static HTML/CSS/JS** untuk situs publik — tanpa build step, deploy instan ke Cloudflare Worker (static assets), SEO-friendly.
+- **Cloudflare Worker** untuk API (`/worker/index.js`, route `/api/*`).
 - **Cloudflare D1** (SQLite) sebagai database.
 - **Admin Dashboard** client-side (`/admin/`) dengan opsi sinkron ke D1.
 
@@ -389,7 +389,7 @@ Total: **1 zona, 24 booth, 24 tenant (1 booth = 1 tenant).** Baris atas B01–B1
 | Halaman statis: `/tentang`, `/syarat`, `/privasi`, `/kontak`, `404` | ✅ Selesai |
 | Bilingual ID/EN (toggle, tersimpan di browser) | ✅ Selesai |
 | Database D1 (schema + seed + API) — termasuk `sites`, `tenant_days`, `booth_status`, `applications` | ✅ Selesai |
-| Deploy: Cloudflare Pages via Git (commit → auto live) | ✅ Siap |
+| Deploy: Cloudflare Worker via Git (commit → auto live) | ✅ Siap |
 | **QR check-in** (`/q/kode`) & statistik QR nyata | ⏸️ **Ditunda** — titik di area stasiun, bukan venue khusus |
 | Gambar flow `Disinting Kel 5.png` | ✅ Diterima & diekstrak (lihat §6) |
 

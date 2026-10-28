@@ -575,7 +575,7 @@
     var el = document.getElementById("tab-settings");
     el.innerHTML = '<h2>Pengaturan</h2>' +
       '<div class="admin-card"><h3>Koneksi API / D1</h3>' +
-      '<label>API Base URL</label><input id="cfgBase" placeholder="https://titik-ngemil.pages.dev" value="' + esc(cfg.apiBase) + '">' +
+      '<label>API Base URL</label><input id="cfgBase" placeholder="https://titik-ngemil.<akun>.workers.dev" value="' + esc(cfg.apiBase) + '">' +
       '<label style="margin-top:12px">Admin Token</label><input id="cfgToken" placeholder="token rahasia" value="' + esc(cfg.apiToken) + '">' +
       '<p class="form-note">Token disimpan di browser ini & dikirim sebagai header Authorization ke endpoint admin.</p>' +
       '<button class="btn btn-primary" id="saveCfg" style="margin-top:12px">Simpan Pengaturan</button></div>' +

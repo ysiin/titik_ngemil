@@ -1,11 +1,13 @@
 /**
  * serve.mjs — dev server ringan (tanpa wrangler/D1)
  *
- * Meniru perilaku Cloudflare Pages:
+ * Meniru perilaku static assets Cloudflare Worker:
  *   - clean URL  : /tenant        -> public/tenant.html
  *   - index      : /dashboard/    -> public/dashboard/index.html
  *   - 404        : public/404.html
  *   - redirect   : peta.html / gabung.html / admin/ tetap jalan (client-side)
+ *
+ * Catatan: /api/* hanya hidup di `npm run dev` (wrangler), bukan di sini.
  *
  * Jalankan: npm run dev:static   (atau: node scripts/serve.mjs)
  */

@@ -3,13 +3,13 @@
 **Pop-up market PKL terkurasi** — titik perdana di **Lorong Srikaya, Gondangdia, Jakarta Pusat**.
 Event perdana berlangsung **satu hari**: Jumat, **30 Oktober 2026**, 14.00–22.00 WIB. Titik lain masih berstatus **Coming Soon**.
 
-> Website publik + 2 Dashboard (Tenant & Admin) + Database (Cloudflare D1), siap deploy ke **Cloudflare Pages** lewat Git (commit → otomatis live).
+> Website publik + 2 Dashboard (Tenant & Admin) + Database (Cloudflare D1), siap deploy sebagai **Cloudflare Worker** lewat Git (commit → otomatis live).
 
 - **Event:** 1 acara, **1 hari** (Jumat, 30 Oktober 2026), 14.00–22.00 WIB
 - **Titik:** 1 aktif (**Lorong Srikaya**, nama bisa diubah admin) + 3 Coming Soon
 - **Booth:** 1 lorong, **24 booth** bernomor (B01–B24)
 - **Referensi gaya:** Brightspot Market (tenant terkurasi, booth bernomor, gratis masuk)
-- **Stack:** Static HTML/CSS/JS + Cloudflare Pages Functions + Cloudflare D1
+- **Stack:** Static HTML/CSS/JS + Cloudflare Worker (API) + Cloudflare D1
 
 ---
 
@@ -31,7 +31,7 @@ Event perdana berlangsung **satu hari**: Jumat, **30 Oktober 2026**, 14.00–22.
 | `/jadwal` · `/kunjungan` · `/partner` · `/tentang` | Halaman pendukung |
 | `/syarat` · `/privasi` · `/kontak` · `404` | Halaman statis & error |
 
-> URL bersih (tanpa `.html`) — didukung Cloudflare Pages. File lama `peta.html` & `gabung.html` otomatis dialihkan ke route baru.
+> URL bersih (tanpa `.html`) — didukung static assets Worker (`html_handling` bawaan). File lama `peta.html` & `gabung.html` otomatis dialihkan ke route baru.
 
 ---
 
@@ -39,7 +39,7 @@ Event perdana berlangsung **satu hari**: Jumat, **30 Oktober 2026**, 14.00–22.
 
 ```
 titik_ngemil/
-├─ public/                        # Situs statis (build output directory)
+├─ public/                        # Static assets (HTML/CSS/JS)
 │  ├─ index.html                  # Beranda
 │  ├─ titik.html                  # Indeks titik
 │  ├─ titik/gondangdia.html       # Hub titik aktif
@@ -60,21 +60,9 @@ titik_ngemil/
 │  ├─ assets/js/admin.js          # Logika dashboard admin
 │  ├─ assets/js/tenant-dash.js    # Logika dashboard tenant
 │  └─ data/db.js                  # ⭐ Dataset kanonik (juga sumber seed D1)
-├─ functions/                     # Cloudflare Pages Functions (API)
-│  ├─ _shared.js
-│  └─ api/
-│     ├─ _middleware.js           # CORS + error handling
-│     ├─ event.js                 # GET /api/event
-│     ├─ sites.js                 # GET /api/sites
-│     ├─ tenants.js               # GET /api/tenants[?slug=]
-│     ├─ zones.js                 # GET /api/zones[?with=stalls]
-│     ├─ stalls.js                # GET /api/stalls
-│     ├─ schedule.js              # GET /api/schedule
-│     ├─ applications/index.js    # POST (publik) / GET (admin) /api/applications
-│     ├─ applications/[id].js     # PATCH keputusan admin
-│     └─ admin/
-│        ├─ _middleware.js        # Wajib admin token
-│        └─ sync.js               # POST /api/admin/sync (push dataset ke D1)
+├─ worker/                        # Cloudflare Worker (API + static assets)
+│  ├─ index.js                    # Router /api/* + fallback ke ASSETS
+│  └─ _shared.js                  # Helper: json/err/CORS, auth admin, row mapper
 ├─ scripts/gen-seed.mjs           # Generate seed.sql dari public/data/db.js
 ├─ schema.sql                     # Skema tabel D1
 ├─ seed.sql                       # Data seed D1 (hasil generate)
@@ -99,18 +87,23 @@ git commit -m "pesan perubahan"
 git push
 ```
 
-### 2. Sambungkan ke Cloudflare Pages
+### 2. Sambungkan ke Cloudflare Worker
 
-1. Buka **Cloudflare Dashboard → Workers & Pages → Create → Pages → Connect to Git**.
-2. Pilih repo `titik-ngemil` (branch `main`).
-3. Isi **Build settings**:
-   - **Framework preset:** `None`
-   - **Build command:** *(kosongkan — tidak ada build step)*
-   - **Build output directory:** `public`
-4. **Save and Deploy.** Situs live di `https://titik-ngemil.pages.dev`.
-   > Setiap `git push` ke `main` otomatis deploy ulang. ✅
+Repo ini adalah **Worker + static assets**, jadi deploy command **default**
+(`npx wrangler deploy`) langsung dipakai — tidak ada yang perlu diubah.
 
-Folder `functions/` ikut terpakai otomatis — tidak perlu diatur.
+1. Buka **Cloudflare Dashboard → Workers & Pages → Create application**.
+2. Pilih **Import a repository** (bagian **Workers**, bukan tab Pages).
+3. Pilih repo `titik-ngemil`, branch `main`.
+4. Build command: **kosongkan**. Deploy command: biarkan **`npx wrangler deploy`**.
+5. **Save and Deploy.** Situs live di `https://titik-ngemil.<akun>.workers.dev`.
+
+> Setiap `git push` ke `main` otomatis deploy ulang. ✅
+> `wrangler.toml` mengatur semuanya: `main = worker/index.js` untuk API dan
+> `[assets] directory = "./public"` untuk seluruh halaman.
+
+Nama Worker di `wrangler.toml` (`name = "titik-ngemil"`) harus sama dengan nama
+project di dashboard. Kalau project kamu bernama lain, ubah baris itu lalu push.
 
 ### 3. Buat database D1 + isi data
 
@@ -133,16 +126,16 @@ npx.cmd wrangler d1 execute titik-ngemil-db --remote --file=./schema.sql
 npx.cmd wrangler d1 execute titik-ngemil-db --remote --file=./seed.sql
 ```
 
-### 4. Hubungkan D1 ke Pages
+### 4. Hubungkan D1 ke Worker
 
-**Pages project → Settings → Functions → D1 database bindings → Add binding**
+**Worker project → Settings → Bindings → Add → D1 database**
 
 | Field | Isi |
 |---|---|
 | Variable name | `DB` |
 | D1 database | `titik-ngemil-db` |
 
-Lalu **Settings → Environment variables → Add**:
+Lalu **Settings → Variables and Secrets → Add**:
 
 | Name | Value |
 |---|---|
@@ -150,44 +143,41 @@ Lalu **Settings → Environment variables → Add**:
 
 Setelah binding disimpan, **redeploy** (Deployments → ⋯ → Retry deployment) agar binding aktif.
 
+> Alternatif: buka komentar blok `[[d1_databases]]` di `wrangler.toml` lalu isi
+> `database_id`, dan taruh `ADMIN_TOKEN` di `[vars]`. Perubahan via file ikut
+> ter-deploy otomatis, tanpa perlu setting manual di dashboard.
+
 ### 5. Cek hasilnya
 
-- `https://titik-ngemil.pages.dev/api/sites` → JSON berisi 4 titik.
+- `https://titik-ngemil.<akun>.workers.dev/api/sites` → JSON berisi 4 titik.
   Kalau muncul `Database D1 belum terhubung` → binding `DB` belum aktif.
 - Kirim formulir di `/daftar-tenant` → lalu cek `SELECT COUNT(*) FROM applications;` bertambah.
 
 ### 6. Troubleshooting
 
 **`[ERROR] It looks like you've run a Workers-specific command in a Pages project`**
-atau log berisi `Executing user deploy command: npx wrangler deploy`
 
-Artinya project dibuat sebagai **Worker** (Workers Builds), bukan **Pages**.
-Project Worker selalu menjalankan deploy command `npx wrangler deploy`, sedangkan
-repo ini proyek Pages (`wrangler.toml` hanya punya `pages_build_output_dir`,
-tanpa `main` / `[assets]`). Dua jenis project ini **tidak bisa saling tukar**.
+Error ini muncul kalau project dibuat sebagai **Pages**, padahal repo ini Worker.
+Sejak migrasi ke Worker, `npx wrangler deploy` adalah perintah yang benar.
 
-Perbaikan — hapus lalu buat ulang sebagai Pages:
-
-1. **Workers & Pages** → buka project yang salah → **Settings** → **Delete project**.
-   (Wajib dihapus dulu, karena nama project dipakai bersama oleh Worker & Pages.)
-2. **Create application** → **Pages** → **Connect to Git** → pilih repo `titik-ngemil`.
-3. Build command **kosong**, build output directory **`public`** → **Save and Deploy**.
-
-> Mengganti deploy command menjadi `npx wrangler pages deploy public` di
-> **Settings → Build → Deploy command** memang bisa, tetapi token API yang dibuat
-> otomatis oleh Workers Builds hanya punya izin Workers (tanpa izin Pages),
-> sehingga deploy tetap gagal dengan error autentikasi. Buat project Pages baru.
+Perbaikan: pastikan project dibuat lewat **Workers → Import a repository**,
+bukan **Pages → Connect to Git**. Kalau project yang ada bertipe Pages, hapus
+lalu buat ulang sebagai Worker (nama project dipakai bersama, jadi harus dihapus dulu).
 
 **`The version of Wrangler you are using is now out-of-date`**
-Hanya peringatan, bukan penyebab gagal. Pada alur Pages, Wrangler tidak dipakai
-untuk deploy (Cloudflare sendiri yang meng-upload `public/`), jadi aman diabaikan.
+Sudah tidak muncul: `package.json` memakai `wrangler ^4`, dan Workers Builds
+memakai versi dari `package.json`.
+
+**`Could not detect a directory of static assets` / `[assets] directory not found`**
+Pastikan folder `public/` ada di root repo (bukan dipindah), dan `main` menunjuk
+ke `worker/index.js`.
 
 ### 7. Local development (opsional)
 
 ```bash
 npm.cmd install
-npm.cmd run dev        # wrangler pages dev public --d1=DB
-# buka http://localhost:8788
+npm.cmd run dev        # wrangler dev — Worker + static assets
+# buka http://localhost:8787
 ```
 
 > ⚠️ PowerShell di mesin ini memblokir `npm`/`npx` (ExecutionPolicy `Restricted`), jadi **pakai `npm.cmd` / `npx.cmd`**.
